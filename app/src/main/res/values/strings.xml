@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">O Vigia</string>
+
+    <string name="title_o">O</string>
+    <string name="title_vigia">Vigia</string>
+    <string name="cd_settings">Configurações</string>
+    <string name="cd_profile">Perfil</string>
+    <string name="cd_back">Voltar</string>
+    <string name="cd_previous_question">Pergunta anterior</string>
+    <string name="btn_me_desafie">Me desafie</string>
+
+    <string name="question_number">Questão Nº %1$d:</string>
+    <string name="question_placeholder">Carregando personagens…</string>
+    <string name="btn_sim">Sim</string>
+    <string name="btn_nao">Não</string>
+    <string name="btn_provavelmente_sim">Provavelmente sim</string>
+    <string name="btn_provavelmente_nao">Provavelmente não</string>
+    <string name="btn_nao_sei">Não sei</string>
+
+    <string name="answer_intro">Eu acho que:</string>
+    <string name="answer_character_placeholder">Personagem</string>
+
+    <string name="error_load_characters">Não foi possível carregar os personagens. Toque para tentar de novo.</string>
+    <string name="victory_message">Eu venci! 🎉</string>
+    <string name="defeat_message">Você venceu! Não consegui adivinhar seu personagem.</string>
+
+    <string name="continue_prompt_question">Você deseja continuar?</string>
+
+    <string name="select_alternative_title">Selecione personagem pensado:</string>
+    <string name="btn_none_of_alternatives">Não Aparece</string>
+    <string name="btn_validar">Validar</string>
+    <string name="alternate_correct_message">Ufa! Era o(a) %1$s mesmo! 🎉</string>
+</resources>

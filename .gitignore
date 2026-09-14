@@ -1,0 +1,22 @@
+# Gradle / build
+.gradle/
+build/
+/captures
+.externalNativeBuild
+.cxx
+
+# Configuração local e segredos — cada dev tem os seus
+local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# IDE
+*.iml
+.idea/*
+!.idea/codeStyles/
+!.idea/runConfigurations.xml
+
+# Ferramentas locais
+.claude/
+.DS_Store

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="vigia_blue">#1957D8</color>
+    <color name="vigia_blue_dark">#123F9E</color>
+    <color name="vigia_gold">#E8C468</color>
+    <color name="vigia_panel">#CC0B1330</color>
+    <color name="vigia_icon">#FFFFFFFF</color>
+</resources>
