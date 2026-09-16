@@ -32,6 +32,23 @@ jobs:
       - name: Lint
         run: ./gradlew lintDebug
 
+      # Sem secrets configurados o passo é pulado e o APK sai unsigned.
+      # Cadastre em Settings → Secrets and variables → Actions:
+      #   OVIGIA_KEYSTORE_BASE64  (base64 do arquivo .jks — `base64 keystore.jks`)
+      #   OVIGIA_STOREPASSWORD
+      #   OVIGIA_KEYALIAS
+      #   OVIGIA_KEYPASSWORD
+      - name: Decodifica keystore de release
+        env:
+          OVIGIA_KEYSTORE_BASE64: ${{ secrets.OVIGIA_KEYSTORE_BASE64 }}
+        if: env.OVIGIA_KEYSTORE_BASE64 != ''
+        run: |
+          echo "$OVIGIA_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/keystore.jks"
+          echo "OVIGIA_STOREFILE=$RUNNER_TEMP/keystore.jks" >> "$GITHUB_ENV"
+          echo "OVIGIA_STOREPASSWORD=${{ secrets.OVIGIA_STOREPASSWORD }}" >> "$GITHUB_ENV"
+          echo "OVIGIA_KEYALIAS=${{ secrets.OVIGIA_KEYALIAS }}" >> "$GITHUB_ENV"
+          echo "OVIGIA_KEYPASSWORD=${{ secrets.OVIGIA_KEYPASSWORD }}" >> "$GITHUB_ENV"
+
       - name: Build de release (R8)
         run: ./gradlew assembleRelease
 
