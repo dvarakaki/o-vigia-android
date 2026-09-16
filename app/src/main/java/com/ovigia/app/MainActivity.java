@@ -1,47 +1,40 @@
 package com.ovigia.app;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.ovigia.app.databinding.ActivityMainBinding;
-import com.ovigia.app.game.GameViewModel;
 
+/**
+ * Activity única: hospeda o NavHostFragment com todas as telas. O fundo espacial
+ * vai de ponta a ponta; aqui o conteúdo recua das laterais, da barra de navegação
+ * e do teclado. O topo (barra de status) fica com cada tela — ver
+ * {@link com.ovigia.app.ui.SystemBarInsets} — para permitir cabeçalhos imersivos.
+ */
 public class MainActivity extends AppCompatActivity {
-
-    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navHost, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.displayCutout()
+                    | WindowInsetsCompat.Type.ime());
+            v.setPadding(bars.left, 0, bars.right, bars.bottom);
+            // Não consome: as telas ainda precisam do topo.
             return insets;
-        });
-
-        OVigiaApplication app = (OVigiaApplication) getApplication();
-        GameViewModel viewModel = new ViewModelProvider(app, app.gameViewModelFactory())
-                .get(GameViewModel.class);
-
-        binding.btnMeDesafie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewModel.resetGame();
-                startActivity(new Intent(MainActivity.this, PerguntasActivity.class));
-            }
         });
     }
 }

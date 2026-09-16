@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Grade do catálogo: cartas entram em cascata na primeira carga e ao trocar o filtro. -->
+<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animation="@anim/grid_item_enter"
+    android:animationOrder="normal"
+    android:delay="10%" />

@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
-    <color name="vigia_blue">#1957D8</color>
-    <color name="vigia_blue_dark">#123F9E</color>
-    <color name="vigia_gold">#E8C468</color>
-    <color name="vigia_panel">#CC0B1330</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="white_20">#33FFFFFF</color>
+    <color name="white_10">#1AFFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
     <color name="vigia_icon">#FFFFFFFF</color>
+
+    <color name="vigia_space">#FF070B1F</color>
+    <color name="vigia_blue">#FF1957D8</color>
+    <!-- Azul legível sobre o painel escuro (legendas e gráficos). -->
+    <color name="vigia_blue_light">#FF5B8CFF</color>
+    <color name="vigia_danger">#FFFF6B6B</color>
+    <color name="vigia_gold">#FFE8C468</color>
+    <color name="vigia_panel">#CC0B1330</color>
+    <!-- Painel opaco: cartas com imagem não deixam o fundo vazar pelos cantos. -->
+    <color name="vigia_panel_solid">#FF0E1533</color>
+    <color name="vigia_gold_soft">#99E8C468</color>
+    <color name="vigia_gold_bg">#26E8C468</color>
+    <color name="vigia_dialog">#FF15183A</color>
 </resources>

@@ -1,0 +1,116 @@
+rules_version = '2';
+
+// Regras dos amigos online do O Vigia (ver FirebaseSocialBackend).
+//
+//   usernames/{username}          → { uid }            @usuario único
+//   users/{uid}                   → cartão público     qualquer conta online lê
+//   users/{uid}/friends/{friend}  → { since }          amizades, dos dois lados
+//   profiles/{uid}                → perfil completo    só o dono e os amigos leem
+//   friendRequests/{from}_{to}    → pedido pendente    só os dois envolvidos veem
+//
+// Não há Cloud Functions (o projeto cabe no plano gratuito): tudo que precisa ser
+// garantido — @usuario único, amizade só com pedido aceito — está aqui.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isFriendOf(owner) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(owner)/friends/$(request.auth.uid));
+    }
+
+    // Mesmas regras de Username.java.
+    function validUsername(name) {
+      return name is string && name.matches('^[a-z0-9_]{3,20}$') && name.matches('.*[a-z0-9].*');
+    }
+
+    function optionalString(data, field, maxSize) {
+      return !(field in data) || data[field] == null
+        || (data[field] is string && data[field].size() <= maxSize);
+    }
+
+    function optionalNumber(data, field) {
+      return !(field in data) || data[field] is int;
+    }
+
+    match /usernames/{name} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn() && validUsername(name)
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      // O @usuario gravado no cartão precisa estar reservado para a própria conta.
+      allow create, update: if isUser(uid)
+        && request.resource.data.keys().hasOnly(['username', 'name', 'avatar', 'updatedAt'])
+        && validUsername(request.resource.data.username)
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.username)).data.uid == uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40
+        && optionalString(request.resource.data, 'avatar', 60000)
+        && optionalNumber(request.resource.data, 'updatedAt');
+      allow delete: if isUser(uid);
+
+      // Amizade só nasce do pedido que {friendUid} → {uid} (ou o contrário) ainda
+      // pendente, e só quem RECEBEU o pedido cria os dois lados.
+      match /friends/{friendUid} {
+        allow read: if isUser(uid);
+        allow create: if signedIn()
+          && request.resource.data.keys().hasOnly(['since'])
+          && (
+            (request.auth.uid == uid
+              && exists(/databases/$(database)/documents/friendRequests/$(friendUid + '_' + uid)))
+            || (request.auth.uid == friendUid
+              && exists(/databases/$(database)/documents/friendRequests/$(uid + '_' + friendUid)))
+          );
+        // Qualquer um dos dois desfaz a amizade.
+        allow delete: if signedIn() && (request.auth.uid == uid || request.auth.uid == friendUid);
+      }
+    }
+
+    match /profiles/{uid} {
+      allow read: if isUser(uid) || isFriendOf(uid);
+      allow create, update: if isUser(uid)
+        && request.resource.data.keys().hasOnly(['bio', 'banner', 'gamesPlayed', 'engineWins',
+             'distinctCharacters', 'heroes', 'achievements', 'updatedAt'])
+        && optionalString(request.resource.data, 'bio', 120)
+        && optionalString(request.resource.data, 'banner', 400000)
+        && optionalNumber(request.resource.data, 'gamesPlayed')
+        && optionalNumber(request.resource.data, 'engineWins')
+        && optionalNumber(request.resource.data, 'distinctCharacters')
+        && (!('heroes' in request.resource.data) || request.resource.data.heroes is list)
+        && (!('achievements' in request.resource.data) || request.resource.data.achievements is map);
+      allow delete: if isUser(uid);
+    }
+
+    match /friendRequests/{requestId} {
+      allow read: if signedIn()
+        && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.to is string
+        && request.resource.data.to != request.auth.uid
+        && requestId == request.resource.data.from + '_' + request.resource.data.to
+        && request.resource.data.keys().hasOnly(['from', 'to', 'fromName', 'fromUsername', 'fromAvatar',
+             'toName', 'toUsername', 'toAvatar', 'createdAt'])
+        && optionalString(request.resource.data, 'fromAvatar', 60000)
+        && optionalString(request.resource.data, 'toAvatar', 60000)
+        && exists(/databases/$(database)/documents/users/$(request.resource.data.to))
+        && !exists(/databases/$(database)/documents/users/$(request.auth.uid)/friends/$(request.resource.data.to));
+      // Recusar (quem recebeu) ou cancelar (quem mandou); aceitar também apaga o pedido.
+      allow delete: if signedIn()
+        && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+    }
+  }
+}

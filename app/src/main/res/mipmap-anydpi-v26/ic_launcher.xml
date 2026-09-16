@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Adaptive icon: usa o PNG cheio como background (edge-to-edge). O launcher
-  aplica só a máscara de shape (círculo/squircle) sobre a arte, sem embrulhar
-  em moldura branca — que é o que Android faz com legacy icons sem este XML.
-  Foreground é transparente porque a arte inteira já está no PNG de fundo.
+  A arte ocupa o centro da camada de frente (dentro da zona segura de 72dp),
+  sobre um fundo sólido: qualquer máscara do launcher (círculo, squircle,
+  gota) mostra o rosto inteiro, sem cortar nem ampliar.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/ic_launcher_full" />
-    <foreground android:drawable="@android:color/transparent" />
+    <background android:drawable="@color/vigia_space" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <!-- Ícone temático (Android 13+): traço gerado a partir da luminância da arte. -->
+    <monochrome android:drawable="@drawable/ic_launcher_monochrome" />
 </adaptive-icon>

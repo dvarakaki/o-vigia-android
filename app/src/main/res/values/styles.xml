@@ -1,0 +1,204 @@
+<resources>
+
+    <!-- Botão principal azul arredondado usado em todas as telas. -->
+    <style name="Widget.OVigia.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/button_primary_background</item>
+        <item name="android:textColor">@color/button_primary_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">28dp</item>
+    </style>
+
+    <!-- Botão compacto dentro de linhas de lista (aceitar, adicionar). -->
+    <style name="Widget.OVigia.Button.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="cornerRadius">20dp</item>
+    </style>
+
+    <!-- Botão contornado, para ações secundárias sobre o fundo espacial. -->
+    <style name="Widget.OVigia.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/button_primary_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="strokeColor">@color/white_70</item>
+    </style>
+
+    <!-- Ação destrutiva (excluir conta): contorno e texto vermelhos. -->
+    <style name="Widget.OVigia.Button.Danger" parent="Widget.OVigia.Button.Outlined">
+        <item name="android:textColor">@color/vigia_danger</item>
+        <item name="strokeColor">@color/vigia_danger</item>
+        <item name="rippleColor">@color/white_10</item>
+    </style>
+
+    <!-- Ação de texto dourada ("Ver todos", "Ler biografia completa"). -->
+    <style name="Widget.OVigia.TextAction" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/vigia_gold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="rippleColor">@color/white_10</item>
+    </style>
+
+    <!-- Filtro do catálogo (Meus heróis / Todos). -->
+    <style name="Widget.OVigia.FilterChip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_filter_background</item>
+        <item name="chipStrokeColor">@color/chip_filter_stroke</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="chipCornerRadius">18dp</item>
+    </style>
+
+    <!-- Etiqueta das listas da ficha do herói. -->
+    <style name="Widget.OVigia.DetailChip" parent="Widget.Material3.Chip.Assist">
+        <item name="chipBackgroundColor">@color/white_10</item>
+        <item name="chipStrokeColor">@color/white_20</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="chipMinHeight">34dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">13sp</item>
+        <item name="chipIconTint">@color/vigia_gold</item>
+        <item name="rippleColor">@color/white_20</item>
+    </style>
+
+    <!-- Opção do seletor Entrar / Criar conta. -->
+    <style name="Widget.OVigia.ToggleButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="backgroundTint">@color/toggle_mode_background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="strokeColor">@color/vigia_blue</item>
+    </style>
+
+    <!-- Campo de texto contornado com destaque dourado. -->
+    <style name="Widget.OVigia.TextField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_field_stroke</item>
+        <item name="hintTextColor">@color/vigia_gold</item>
+    </style>
+
+    <!-- Ícones de barra: alvo de toque de 48dp (mínimo de acessibilidade). -->
+    <style name="Widget.OVigia.IconButton" parent="">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="tint">@color/white</item>
+    </style>
+
+    <!-- Ícone sobre imagem (banner): disco translúcido garante contraste. -->
+    <style name="Widget.OVigia.IconButton.Scrim">
+        <item name="android:background">@drawable/bg_icon_scrim</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <!-- Card dos painéis do perfil. -->
+    <style name="Widget.OVigia.DashboardCard" parent="">
+        <item name="android:background">@drawable/bg_card_dashboard</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- Título de seção do perfil e da edição. -->
+    <style name="Widget.OVigia.SectionTitle" parent="">
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:accessibilityHeading">true</item>
+        <item name="android:textAppearance">@style/TextAppearance.OVigia.Label</item>
+    </style>
+
+    <!-- Card das configurações: as linhas vão de borda a borda (o toque ocupa a largura toda). -->
+    <style name="Widget.OVigia.SettingsCard" parent="Widget.OVigia.DashboardCard">
+        <item name="android:padding">0dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <!-- Linha das configurações: ícone, título e resumo, e um controle no fim. -->
+    <style name="Widget.OVigia.SettingsRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.OVigia.SettingsIcon" parent="">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="tint">@color/vigia_gold</item>
+    </style>
+
+    <!-- Separador entre linhas, alinhado ao texto (depois do ícone). -->
+    <style name="Widget.OVigia.SettingsDivider" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">56dp</item>
+        <item name="android:background">@color/white_10</item>
+    </style>
+
+    <style name="Widget.OVigia.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="thumbTint">@color/switch_thumb</item>
+        <item name="trackTint">@color/switch_track</item>
+        <item name="trackDecorationTint">@color/switch_track_decoration</item>
+    </style>
+
+    <style name="TextAppearance.OVigia.SettingTitle" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.OVigia.SettingSummary" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/white_70</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Balão de fala com a ponta à esquerda; o 9-patch já define o padding interno. -->
+    <style name="Widget.OVigia.SpeechPanel" parent="">
+        <item name="android:background">@drawable/dialogo_grande</item>
+    </style>
+
+    <style name="TextAppearance.OVigia.Label" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/vigia_gold</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.OVigia.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/vigia_gold</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextAppearance.OVigia.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>

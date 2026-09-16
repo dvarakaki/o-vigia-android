@@ -1,13 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
--->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 9–11. Aprendizado, contas, coleção, imagens do perfil e configurações vão para o backup; o cache do elenco (baixável de novo) fica de fora. -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <include domain="file" path="learning_store.json" />
+    <include domain="file" path="accounts.json" />
+    <include domain="file" path="collection.json" />
+    <include domain="file" path="profile_media/" />
+    <include domain="file" path="settings.json" />
 </full-backup-content>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fim da partida com personagem conhecido: mensagem, personagem e o desbloqueio no catálogo. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        style="@style/Widget.OVigia.SpeechPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="64dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            android:accessibilityLiveRegion="polite"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.OVigia.Title"
+            tools:text="@string/victory_message" />
+
+        <!-- Retrato com brilho por trás e o cadeado por cima (some ao desbloquear). -->
+        <FrameLayout
+            android:id="@+id/portraitFrame"
+            android:layout_width="@dimen/result_portrait_frame"
+            android:layout_height="@dimen/result_portrait_frame"
+            android:layout_marginTop="4dp"
+            android:clipChildren="false">
+
+            <View
+                android:id="@+id/unlockGlow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:background="@drawable/bg_unlock_glow"
+                android:importantForAccessibility="no" />
+
+            <FrameLayout
+                android:layout_width="@dimen/avatar_large"
+                android:layout_height="@dimen/avatar_large"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/imageCharacter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_avatar_placeholder"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_character_placeholder" />
+
+                <FrameLayout
+                    android:id="@+id/lockOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_lock_overlay"
+                    android:importantForAccessibility="no"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/lockIcon"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_lock"
+                        app:tint="@color/vigia_gold" />
+                </FrameLayout>
+            </FrameLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvCharacterName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.OVigia.Body"
+            android:textStyle="bold"
+            tools:text="Wolverine" />
+
+        <!-- Situação no catálogo: "Novo herói desbloqueado!", "Já está no seu catálogo"… -->
+        <TextView
+            android:id="@+id/tvUnlockStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:accessibilityLiveRegion="polite"
+            android:background="@drawable/bg_unlock_badge"
+            android:drawablePadding="6dp"
+            android:gravity="center"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="6dp"
+            android:textColor="@color/vigia_gold"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_lock_open"
+            app:drawableTint="@color/vigia_gold"
+            tools:text="@string/result_unlocked_new"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvUnlockHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="@color/white_70"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="@string/result_locked_hint"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:visibility="gone"
+        tools:text="@string/result_view_hero"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/btnHome"
+        style="@style/Widget.OVigia.Button.Outlined"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/result_home"
+        android:textSize="16sp" />
+</LinearLayout>

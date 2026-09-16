@@ -1,9 +1,32 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Msovigia" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+    <!-- O app tem uma identidade única (fundo espacial escuro): tema escuro fixo. -->
+    <style name="Theme.OVigia" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/vigia_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/vigia_gold</item>
+        <item name="colorSurface">@color/vigia_dialog</item>
+        <item name="colorSurfaceContainerHigh">@color/vigia_dialog</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:colorBackground">@color/vigia_space</item>
+        <item name="android:windowBackground">@color/vigia_space</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="materialButtonStyle">@style/Widget.OVigia.Button</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.OVigia.Dialog</item>
     </style>
 
-    <style name="Theme.Msovigia" parent="Base.Theme.Msovigia" />
+    <!-- Diálogos: botões de texto em dourado — azul sobre o fundo azul-escuro some. -->
+    <style name="ThemeOverlay.OVigia.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/vigia_gold</item>
+        <item name="colorSurface">@color/vigia_dialog</item>
+        <item name="colorSurfaceContainerHigh">@color/vigia_dialog</item>
+    </style>
+
+    <!-- Splash (Android 12+ usa o ícone do app sobre esta cor). -->
+    <style name="Theme.OVigia.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/vigia_space</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.OVigia</item>
+    </style>
 </resources>

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ms-o-vigia"
+rootProject.name = "oVigia"
 include(":app")
  

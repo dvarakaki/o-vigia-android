@@ -11,43 +11,48 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Configuração do cliente HTTP da Comic Vine.
+ *
+ * A URL base e a chave vêm do {@code local.properties} (ver README). Para
+ * publicar o app sem embutir a chave no APK, aponte {@code COMIC_VINE_BASE_URL}
+ * para um proxy seu que injete a chave no servidor e deixe
+ * {@code COMIC_VINE_API_KEY} vazia.
+ */
 public final class ApiClient {
 
-    private static final String TAG = "ApiClient";
-    private static final String BASE_URL = "https://comicvine.gamespot.com/api/";
+    private static final String TAG = "ComicVineHttp";
+    public static final String DEFAULT_BASE_URL = "https://comicvine.gamespot.com/api/";
     public static final String FORMAT = "json";
-    private static final String USER_AGENT = "OVigiaApp/1.0 (Android)";
-    public static final String API_KEY = BuildConfig.COMIC_VINE_API_KEY;
+    private static final String USER_AGENT = "OVigiaApp/" + BuildConfig.VERSION_NAME + " (Android)";
 
     /**
-     * Só os campos usados pelo motor do Akinator — payload pequeno, resposta rápida.
-     * count_of_issue_appearances alimenta o prior de popularidade do {@link com.ovigia.app.engine.GameEngine}:
-     * sem ele, um personagem obscuro (poucas aparições) começa tão provável quanto o Homem-Aranha,
-     * o que faz o motor "alucinar" chutes em nomes que o jogador dificilmente escolheria.
+     * Só os campos usados pelo motor — payload pequeno, resposta rápida.
+     * count_of_issue_appearances alimenta o prior de popularidade do motor.
      */
-    public static final String GAME_FIELDS = "id,name,real_name,gender,origin,image,count_of_issue_appearances";
+    public static final String GAME_FIELDS = "id,name,gender,origin,image,count_of_issue_appearances";
 
     /** Máximo de resultados por página que a própria Comic Vine permite. */
     public static final int PAGE_SIZE = 100;
 
-    private static volatile ComicVineService service;
-
     private ApiClient() { }
 
-    public static ComicVineService get() {
-        if (service == null) {
-            synchronized (ApiClient.class) {
-                if (service == null) service = build();
-            }
-        }
-        return service;
+    /** Chave a enviar como {@code api_key}; {@code null} quando um proxy injeta a chave. */
+    public static String apiKey() {
+        String key = BuildConfig.COMIC_VINE_API_KEY;
+        return key == null || key.isEmpty() ? null : key;
     }
 
-    private static ComicVineService build() {
-        HttpLoggingInterceptor log = new HttpLoggingInterceptor();
-        log.setLevel(BuildConfig.DEBUG
-                ? HttpLoggingInterceptor.Level.BASIC
-                : HttpLoggingInterceptor.Level.NONE);
+    /** Há como chegar à API: ou temos chave, ou a URL aponta para um proxy. */
+    public static boolean isConfigured() {
+        return apiKey() != null || !DEFAULT_BASE_URL.equals(BuildConfig.COMIC_VINE_BASE_URL);
+    }
+
+    public static ComicVineService create() {
+        // A chave vai na query string: o log (só em debug) mostra a URL sem ela.
+        HttpLoggingInterceptor log = new HttpLoggingInterceptor(message ->
+                Log.i(TAG, message.replaceAll("api_key=[^&\\s]+", "api_key=***")));
+        log.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(chain -> chain.proceed(
@@ -57,15 +62,11 @@ public final class ApiClient {
                                 .build()))
                 .addInterceptor(log)
                 .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        if (API_KEY == null || API_KEY.isEmpty()) {
-            Log.w(TAG, "COMIC_VINE_API_KEY vazia — configure local.properties.");
-        }
-
         return new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(BuildConfig.COMIC_VINE_BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Estrutura comum das telas da partida (perguntas, chute, continuar): arte do
+  Vigia + botão voltar + painel inferior. Cada fragment infla o próprio painel
+  dentro de panelContainer. A arte começa com o Vigia pensando; as telas trocam
+  o sprite conforme o humor dele (ver WatcherArt).
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@drawable/bg_galaxy">
+
+    <!-- A arte termina atrás do balão: ancorada a um ponto dentro do painel. -->
+    <ImageView
+        android:id="@+id/imageArt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/bar_margin"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter"
+        android:src="@drawable/art_watcher"
+        app:layout_constraintBottom_toBottomOf="@id/artAnchor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="420dp" />
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        style="@style/Widget.OVigia.IconButton"
+        android:layout_margin="@dimen/bar_margin"
+        android:contentDescription="@string/cd_back"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/panelContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="@dimen/content_max_width" />
+
+    <Space
+        android:id="@+id/artAnchor"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/art_overlap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/panelContainer" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

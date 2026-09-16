@@ -1,45 +1,45 @@
 package com.ovigia.app.data;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ovigia.app.model.Character;
+import com.ovigia.app.util.AtomicFiles;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
- * Guarda o elenco (bruto, como a Comic Vine devolve) em um arquivo local,
- * pra não depender de rede — nem do limite de requisições da API — toda vez
- * que o app abre. Uma vez que o elenco foi buscado com sucesso uma vez, o
- * jogo funciona offline dali em diante até o cache expirar.
+ * Guarda o elenco (bruto, como a Comic Vine devolve) em um arquivo local, pra
+ * não depender de rede — nem do limite de requisições da API — toda vez que o
+ * app abre. Métodos bloqueantes: chamar só a partir do executor de I/O.
  */
 final class CharacterDiskCache {
 
     private static final String TAG = "CharacterDiskCache";
-    private static final String FILE_NAME = "characters_cache.json";
     private static final long TTL_MILLIS = TimeUnit.DAYS.toMillis(7);
-    private static final Type LIST_TYPE = new TypeToken<List<Character>>() { }.getType();
+    // getParameterized em vez de "new TypeToken<List<Character>>() {}": a subclasse
+    // anônima depende de assinatura genérica, que o R8 remove no release.
+    private static final Type LIST_TYPE = TypeToken.getParameterized(List.class, Character.class).getType();
 
-    private final File file;
+    private final Supplier<File> fileSupplier;
     private final Gson gson = new Gson();
 
-    CharacterDiskCache(Context context) {
-        this.file = new File(context.getApplicationContext().getFilesDir(), FILE_NAME);
+    CharacterDiskCache(Supplier<File> fileSupplier) {
+        this.fileSupplier = fileSupplier;
     }
 
-    /** Devolve o elenco salvo, mesmo se estiver "velho" — útil como último recurso sem rede. */
+    /** Devolve o elenco salvo, mesmo se estiver "velho" — último recurso sem rede. */
     List<Character> readStale() {
+        File file = fileSupplier.get();
         if (!file.exists()) return null;
-        try (FileReader reader = new FileReader(file)) {
-            List<Character> characters = gson.fromJson(reader, LIST_TYPE);
+        try {
+            List<Character> characters = gson.fromJson(AtomicFiles.readUtf8(file), LIST_TYPE);
             return (characters == null || characters.isEmpty()) ? null : characters;
         } catch (IOException | RuntimeException e) {
             Log.w(TAG, "Falha ao ler cache em disco", e);
@@ -47,21 +47,22 @@ final class CharacterDiskCache {
         }
     }
 
-    /** Devolve o elenco salvo só se ainda estiver dentro da validade (ver {@link #TTL_MILLIS}). */
+    /** Devolve o elenco salvo só se ainda estiver dentro da validade. */
     List<Character> readFresh() {
-        if (!file.exists() || isExpired()) return null;
+        File file = fileSupplier.get();
+        if (!file.exists() || isExpired(file)) return null;
         return readStale();
     }
 
     void write(List<Character> characters) {
-        try (FileWriter writer = new FileWriter(file)) {
-            gson.toJson(characters, LIST_TYPE, writer);
+        try {
+            AtomicFiles.writeUtf8(fileSupplier.get(), gson.toJson(characters, LIST_TYPE));
         } catch (IOException e) {
             Log.w(TAG, "Falha ao salvar cache em disco", e);
         }
     }
 
-    private boolean isExpired() {
+    private static boolean isExpired(File file) {
         return System.currentTimeMillis() - file.lastModified() > TTL_MILLIS;
     }
 }

@@ -1,0 +1,65 @@
+package com.ovigia.app.social;
+
+import androidx.annotation.Nullable;
+
+/**
+ * Servidor dos amigos online. A implementação real é o
+ * {@link FirebaseSocialBackend}; os testes usam um falso em memória.
+ *
+ * Todas as operações são bloqueantes (rede): chamar fora da main thread.
+ */
+public interface SocialBackend {
+
+    /** Se o app tem um servidor para falar. Rápido: pode ser chamado em qualquer thread. */
+    boolean isConfigured();
+
+    /** Conta online com sessão aberta neste aparelho, ou {@code null}. */
+    @Nullable
+    String signedInUid();
+
+    /**
+     * Abre a sessão online com e-mail e senha e devolve o uid. Com
+     * {@code createIfMissing}, cria a conta online quando o e-mail ainda não tem uma.
+     */
+    String signIn(String email, String password, boolean createIfMissing) throws SocialException;
+
+    void signOut();
+
+    /** Cartão de uma conta, ou {@code null} se ela ainda não escolheu @usuario. */
+    @Nullable
+    UserCard loadCard(String uid) throws SocialException;
+
+    /**
+     * Reserva {@code card.username} para a conta conectada e grava o cartão,
+     * liberando {@code previousUsername} se ele for outro.
+     */
+    void claimUsername(UserCard card, @Nullable String previousUsername) throws SocialException;
+
+    /** Grava o cartão e o perfil da conta conectada. */
+    void publish(PublicProfile profile) throws SocialException;
+
+    /** Cartão de quem usa {@code username} (já normalizado), ou {@code null}. */
+    @Nullable
+    UserCard findByUsername(String username) throws SocialException;
+
+    FriendsHub loadHub() throws SocialException;
+
+    void sendRequest(UserCard from, UserCard to) throws SocialException;
+
+    /** Aceita o pedido que {@code fromUid} mandou para a conta conectada. */
+    void acceptRequest(String fromUid) throws SocialException;
+
+    /** Apaga um pedido (recusar, se veio para mim; cancelar, se fui eu que mandei). */
+    void deleteRequest(String fromUid, String toUid) throws SocialException;
+
+    void removeFriend(String friendUid) throws SocialException;
+
+    /** Perfil completo de um amigo (ou da própria conta). */
+    PublicProfile loadProfile(String uid) throws SocialException;
+
+    /** Troca a senha da conta online, confirmando a atual. */
+    void changePassword(String email, String currentPassword, String newPassword) throws SocialException;
+
+    /** Apaga amizades, pedidos, perfil, @usuario e a conta online. */
+    void deleteAccount(String email, String password) throws SocialException;
+}

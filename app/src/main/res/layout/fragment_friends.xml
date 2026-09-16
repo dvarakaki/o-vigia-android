@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Aba de amigos. Antes de ficar online, um cartão só guia o jogador (conectar a
+  conta → escolher o @usuario). Depois: cartão da conta, busca por @usuario,
+  pedidos recebidos, amigos e pedidos enviados.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@drawable/bg_galaxy">
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        style="@style/Widget.OVigia.IconButton"
+        android:layout_margin="@dimen/bar_margin"
+        android:contentDescription="@string/cd_back"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:accessibilityHeading="true"
+        android:gravity="center"
+        android:text="@string/friends_title"
+        android:textAppearance="@style/TextAppearance.OVigia.Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnRefresh"
+        style="@style/Widget.OVigia.IconButton"
+        android:layout_margin="@dimen/bar_margin"
+        android:contentDescription="@string/friends_cd_refresh"
+        android:src="@drawable/ic_refresh"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_margin"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="@dimen/content_max_width">
+
+                <!-- Guia até ficar online (e erros de carga). -->
+                <LinearLayout
+                    android:id="@+id/gateCard"
+                    style="@style/Widget.OVigia.DashboardCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <FrameLayout
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:background="@drawable/bg_profile_avatar">
+
+                        <ImageView
+                            android:id="@+id/imageGate"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_group"
+                            app:tint="@color/vigia_gold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tvGateTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:accessibilityHeading="true"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.OVigia.Title"
+                        tools:text="@string/friends_connect_title" />
+
+                    <TextView
+                        android:id="@+id/tvGateBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:textColor="@color/white_70"
+                        android:textSize="15sp"
+                        tools:text="@string/friends_connect_body" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/passwordLayout"
+                        style="@style/Widget.OVigia.TextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="@string/friends_hint_password"
+                        android:visibility="gone"
+                        app:endIconMode="password_toggle"
+                        app:endIconTint="@color/white_70"
+                        tools:visibility="visible">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="password"
+                            android:imeOptions="actionDone"
+                            android:inputType="textPassword"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/usernameLayout"
+                        style="@style/Widget.OVigia.TextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="@string/friends_hint_username"
+                        android:visibility="gone"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="20"
+                        app:counterTextColor="@color/white_70"
+                        app:helperText="@string/friends_username_helper"
+                        app:helperTextTextColor="@color/white_70"
+                        app:prefixText="@string/friends_at"
+                        app:prefixTextColor="@color/vigia_gold">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUsername"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+                            android:imeOptions="actionDone"
+                            android:importantForAutofill="no"
+                            android:inputType="textVisiblePassword|textNoSuggestions"
+                            android:maxLength="20"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/tvGateError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:textColor="@color/vigia_danger"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        tools:text="@string/friends_error_offline"
+                        tools:visibility="visible" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp">
+
+                        <Button
+                            android:id="@+id/btnGate"
+                            style="@style/Widget.OVigia.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="@string/friends_connect_action" />
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/gateProgress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:elevation="8dp"
+                            android:indeterminate="true"
+                            android:visibility="gone"
+                            app:indicatorColor="@color/white"
+                            app:indicatorSize="24dp"
+                            app:trackThickness="3dp" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tvGateNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center"
+                        android:text="@string/friends_privacy_note"
+                        android:textColor="@color/white_50"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <!-- Online. -->
+                <LinearLayout
+                    android:id="@+id/readyContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- A própria conta: é assim que os outros te encontram. -->
+                    <LinearLayout
+                        android:id="@+id/meCard"
+                        style="@style/Widget.OVigia.DashboardCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_card_catalog_progress"
+                        android:baselineAligned="false"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_profile_avatar"
+                            android:importantForAccessibility="no"
+                            android:padding="2dp">
+
+                            <ImageView
+                                android:id="@+id/imageMe"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:importantForAccessibility="no"
+                                android:padding="12dp"
+                                android:src="@drawable/ic_person"
+                                app:tint="@color/vigia_gold" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:importantForAccessibility="noHideDescendants"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/friends_me_label"
+                                android:textColor="@color/white_70"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvMeUsername"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/vigia_gold"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="\@davi" />
+
+                            <TextView
+                                android:id="@+id/tvMeName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                tools:text="Davi" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Adicionar por @usuario -->
+                    <TextView
+                        style="@style/Widget.OVigia.SectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/friends_add_title" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/searchLayout"
+                        style="@style/Widget.OVigia.TextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/friends_search_hint"
+                        app:endIconContentDescription="@string/friends_cd_search"
+                        app:endIconDrawable="@drawable/ic_search"
+                        app:endIconMode="custom"
+                        app:endIconTint="@color/vigia_gold"
+                        app:prefixText="@string/friends_at"
+                        app:prefixTextColor="@color/vigia_gold"
+                        app:startIconDrawable="@drawable/ic_person_add"
+                        app:startIconTint="@color/white_70">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSearch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_@"
+                            android:imeOptions="actionSearch"
+                            android:importantForAutofill="no"
+                            android:inputType="textVisiblePassword|textNoSuggestions"
+                            android:maxLength="21"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/searchProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:indeterminate="true"
+                        android:visibility="gone"
+                        app:indicatorColor="@color/vigia_gold"
+                        app:trackColor="@color/white_10" />
+
+                    <TextView
+                        android:id="@+id/tvSearchMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/white_70"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        tools:text="@string/friends_search_not_found"
+                        tools:visibility="visible" />
+
+                    <include
+                        android:id="@+id/searchResult"
+                        layout="@layout/item_friend_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:visibility="gone" />
+
+                    <!-- Pedidos recebidos -->
+                    <TextView
+                        android:id="@+id/tvIncomingTitle"
+                        style="@style/Widget.OVigia.SectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Pedidos recebidos (2)" />
+
+                    <LinearLayout
+                        android:id="@+id/incomingList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <!-- Amigos -->
+                    <TextView
+                        android:id="@+id/tvFriendsTitle"
+                        style="@style/Widget.OVigia.SectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Seus amigos (3)" />
+
+                    <TextView
+                        android:id="@+id/tvFriendsEmpty"
+                        style="@style/Widget.OVigia.DashboardCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/friends_empty"
+                        android:textColor="@color/white_70"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/friendsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <!-- Pedidos enviados -->
+                    <TextView
+                        android:id="@+id/tvOutgoingTitle"
+                        style="@style/Widget.OVigia.SectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Pedidos enviados (1)" />
+
+                    <LinearLayout
+                        android:id="@+id/outgoingList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorColor="@color/vigia_gold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

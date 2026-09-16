@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Contorno dos campos: dourado com foco, branco translúcido sem foco (o padrão some no fundo escuro). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/vigia_gold" android:state_focused="true" />
+    <item android:color="@color/white_70" android:state_hovered="true" />
+    <item android:alpha="0.38" android:color="@color/white" android:state_enabled="false" />
+    <item android:color="@color/white_70" />
+</selector>

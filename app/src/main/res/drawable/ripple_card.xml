@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Toque em cards arredondados (linhas do perfil que abrem a ficha). -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/white_20">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+</ripple>

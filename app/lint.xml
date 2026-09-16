@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- O aapt2 do AGP 9 só resolve @mipmap/ic_launcher adaptativo com o qualificador v26. -->
+    <issue id="ObsoleteSdkInt">
+        <ignore path="src/main/res/mipmap-anydpi-v26" />
+    </issue>
+    <!-- O balão 9-patch é desenhado em mdpi e escalado pelo sistema; não há outras densidades. -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+</lint>

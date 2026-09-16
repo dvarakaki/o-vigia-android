@@ -1,12 +1,14 @@
 package com.ovigia.app.api;
 
 import com.ovigia.app.model.Character;
+import com.ovigia.app.model.CharacterDetail;
 import com.ovigia.app.model.ComicVineResponse;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ComicVineService {
@@ -25,5 +27,16 @@ public interface ComicVineService {
             @Query("offset") int offset,
             @Query("filter") String filter,
             @Query("field_list") String fieldList
+    );
+
+    /**
+     * Detalhe completo de um personagem. Sem {@code field_list}: vêm todos os
+     * campos, inclusive as listas de edições, equipes, aliados e inimigos.
+     */
+    @GET("character/4005-{id}/")
+    Call<ComicVineResponse<CharacterDetail>> characterDetail(
+            @Path("id") int id,
+            @Query("api_key") String apiKey,
+            @Query("format") String format
     );
 }

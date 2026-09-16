@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brilho dourado que pulsa atrás do retrato no desbloqueio. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient
+        android:endColor="#00E8C468"
+        android:centerColor="#55E8C468"
+        android:gradientRadius="50%p"
+        android:startColor="#CCFFE7A3"
+        android:type="radial" />
+</shape>

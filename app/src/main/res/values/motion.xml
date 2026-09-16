@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Durações das animações (ms). Todas respeitam a escala de animação do sistema. -->
+<resources>
+    <integer name="motion_screen_enter">260</integer>
+    <integer name="motion_screen_exit">160</integer>
+    <integer name="motion_item">320</integer>
+</resources>

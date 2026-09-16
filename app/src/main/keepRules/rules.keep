@@ -1,12 +1,38 @@
-# Add project specific R8 rules here.
-# AGP will combine all keep rule files in src/main/keepRules to pass to R8
-#
-# For more details, see
-#   https://d.android.com/r/tools/r8/keep-rules
+# Regras do R8 para o O Vigia.
+# AGP combina todos os arquivos de src/main/keepRules e entrega ao R8.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Modelos lidos/escritos via Gson por reflexão (API da Comic Vine, cache em disco,
+# roster.json e estado do aprendizado). Sem isso o R8 renomeia os campos e o JSON
+# deixa de casar.
+-keep class com.ovigia.app.model.** { <fields>; <init>(); }
+-keep class com.ovigia.app.data.roster.RosterCatalog$Document { <fields>; <init>(); }
+-keep class com.ovigia.app.data.roster.RosterCatalog$Entry { <fields>; <init>(); }
+-keep class com.ovigia.app.learning.LearningStore$State { <fields>; <init>(); }
+-keep class com.ovigia.app.learning.LearningStore$GameLogEntry { <fields>; <init>(); }
+-keep class com.ovigia.app.learning.LearningStore$AnswerRecord { <fields>; <init>(); }
+-keepclassmembers enum com.ovigia.app.learning.LearningStore$Outcome { *; }
+-keep class com.ovigia.app.auth.AccountStore$State { <fields>; <init>(); }
+-keep class com.ovigia.app.auth.AccountStore$StoredAccount { <fields>; <init>(); }
+-keep class com.ovigia.app.collection.CollectionStore$State { <fields>; <init>(); }
+-keep class com.ovigia.app.collection.CollectionStore$Entry { <fields>; <init>(); }
+-keep class com.ovigia.app.settings.SettingsStore$State { <fields>; <init>(); }
+-keep class com.ovigia.app.translation.CachedHeroTranslationRepository$Cache { <fields>; <init>(); }
+
+# Gson: preservar assinaturas genéricas e anotações. No modo completo do R8 a
+# assinatura só sobrevive em classes mantidas — por isso as regras de TypeToken.
+-keepattributes Signature, *Annotation*, EnclosingMethod, InnerClasses
+-keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
+-keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
+
+# Retrofit: tipos genéricos dos métodos da interface.
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keep interface com.ovigia.app.api.ComicVineService { *; }
+
+# jsoup (biografia da Comic Vine): o motor de regex alternativo é opcional e não vai no APK.
+-dontwarn com.google.re2j.**
+-dontwarn org.jspecify.annotations.**
+
+# Stack traces legíveis no Play Console (com o mapping.txt).
+-keepattributes SourceFile, LineNumberTable
+-renamesourcefileattribute SourceFile

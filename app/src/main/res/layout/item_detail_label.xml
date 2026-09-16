@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rótulo solto dentro de uma seção (antes de uma lista de etiquetas). -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="8dp"
+    android:letterSpacing="0.06"
+    android:textAllCaps="true"
+    android:textColor="@color/white_50"
+    android:textSize="11sp"
+    android:textStyle="bold"
+    tools:text="Galerias" />

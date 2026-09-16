@@ -1,0 +1,435 @@
+<resources>
+    <!-- Inicio -->
+    <string name="btn_me_desafie">Desafíame</string>
+    <string name="cd_settings">Configuración</string>
+    <string name="cd_profile">Perfil</string>
+    <string name="cd_edit_profile">Editar perfil</string>
+    <string name="cd_catalog">Catálogo de héroes</string>
+    <string name="cd_friends">Amigos</string>
+    <string name="cd_back">Volver</string>
+    <string name="cd_previous_question">Pregunta anterior</string>
+    <string name="cd_watcher_art">El Vigilante, pensativo</string>
+
+    <!-- Perfil -->
+    <string name="percent_value">%1$d%%</string>
+    <string name="profile_empty">Todavía no has jugado ninguna partida.\nAcepta el desafío para empezar tu perfil.</string>
+    <string name="profile_stat_games">Partidas</string>
+    <string name="profile_stat_characters">Personajes</string>
+    <string name="profile_stat_collection">Héroes</string>
+    <string name="profile_score_title">Vigilante × tú</string>
+    <string name="profile_score_ring_caption">del Vigilante</string>
+    <string name="profile_score_engine">Acertó el Vigilante</string>
+    <string name="profile_score_player">Ganaste tú</string>
+    <string name="profile_score_description">El Vigilante acertó %1$d de %2$d partidas (%3$d%%). Ganaste %4$d.</string>
+    <string name="profile_favorites_title">Personajes más elegidos</string>
+    <string name="profile_recent_title">Partidas recientes</string>
+    <string name="profile_unknown_character">Personaje desconocido</string>
+    <string name="profile_outcome_engine">El Vigilante acertó</string>
+    <string name="profile_outcome_alternatives">Encontrado entre las opciones</string>
+    <string name="profile_outcome_revealed">Le ganaste al Vigilante</string>
+    <string name="profile_favorite_position">%1$dº</string>
+    <string name="profile_rank_max">Llegaste a la cima. El Vigilante no te quita el ojo de encima.</string>
+    <plurals name="profile_rank_next">
+        <item quantity="one">Falta %1$d partida para %2$s</item>
+        <item quantity="many">Faltan %1$d partidas para %2$s</item>
+        <item quantity="other">Faltan %1$d partidas para %2$s</item>
+    </plurals>
+    <plurals name="profile_times_picked">
+        <item quantity="one">Elegido en %1$d partida</item>
+        <item quantity="many">Elegido en %1$d partidas</item>
+        <item quantity="other">Elegido en %1$d partidas</item>
+    </plurals>
+    <string name="profile_time_now">ahora</string>
+    <string name="profile_time_minutes">hace %1$d min</string>
+    <string name="profile_time_hours">hace %1$d h</string>
+    <string name="profile_time_yesterday">ayer</string>
+    <string name="profile_time_days">hace %1$d días</string>
+    <string name="profile_time_date">el %1$s</string>
+    <string name="profile_catalog_title">Tu catálogo</string>
+    <string name="profile_catalog_empty">Aún no has desbloqueado ningún héroe. Piensa en un héroe y haz que el Vigilante acierte.</string>
+    <string name="profile_open_catalog">Abrir catálogo</string>
+    <string name="profile_sign_out">Cerrar sesión</string>
+    <string name="profile_signed_out_message">Cerraste sesión.</string>
+
+    <!-- Amigos -->
+    <string name="friends_title">Amigos</string>
+    <string name="friends_cd_refresh">Actualizar amigos y solicitudes</string>
+    <string name="friends_not_configured_title">Amigos no disponibles</string>
+    <string name="friends_not_configured_body">Esta versión de la app no tiene un servidor de amigos configurado.</string>
+    <string name="friends_connect_title">Juega con tus amigos</string>
+    <string name="friends_connect_body">Conecta tu cuenta para agregar amigos y ver su perfil, los héroes que ya desbloquearon y sus logros.</string>
+    <string name="friends_hint_password">Contraseña de tu cuenta</string>
+    <string name="friends_connect_action">Conectar cuenta</string>
+    <string name="friends_privacy_note">Tus amigos ven tu nombre, \@usuario, foto, banner, bio, estadísticas, héroes y logros. Tu correo nunca aparece.</string>
+    <string name="friends_username_title">Elige tu \@usuario</string>
+    <string name="friends_username_body">Así te encontrarán tus amigos.</string>
+    <string name="friends_hint_username">Nombre de usuario</string>
+    <string name="friends_username_helper">De 3 a 20 letras, números o _</string>
+    <string name="friends_username_action">Guardar \@usuario</string>
+    <string name="friends_username_taken">Ese \@usuario ya es de otra persona. Prueba otro.</string>
+    <string name="friends_username_invalid">Usa solo letras sin tilde, números y _.</string>
+    <string name="friends_username_too_short">El \@usuario necesita al menos 3 caracteres.</string>
+    <string name="friends_username_too_long">El \@usuario puede tener como máximo 20 caracteres.</string>
+    <string name="friends_error_title">No se pudo cargar</string>
+    <string name="friends_error_offline">Sin conexión a internet.</string>
+    <string name="friends_error_wrong_password">Contraseña incorrecta.</string>
+    <string name="friends_error_generic">Algo salió mal. Inténtalo de nuevo.</string>
+    <string name="friends_me_label">Eres</string>
+    <string name="friends_cd_me">Tu \@usuario es %1$s</string>
+    <string name="friends_add_title">Agregar amigo</string>
+    <string name="friends_search_hint">usuario de tu amigo</string>
+    <string name="friends_cd_search">Buscar</string>
+    <string name="friends_search_not_found">Nadie usa ese \@usuario.</string>
+    <string name="friends_search_invalid">Escribe un \@usuario válido: 3 a 20 letras, números o _.</string>
+    <string name="friends_incoming_title">Solicitudes recibidas (%1$d)</string>
+    <string name="friends_list_title">Tus amigos (%1$d)</string>
+    <string name="friends_outgoing_title">Solicitudes enviadas (%1$d)</string>
+    <string name="friends_empty">Todavía no tienes amigos aquí. Busca a alguien por su \@usuario.</string>
+    <string name="friends_request_received_detail">\@%1$s quiere ser tu amigo</string>
+    <string name="friends_request_sent_detail">Esperando respuesta</string>
+    <string name="friends_action_add">Agregar</string>
+    <string name="friends_action_accept">Aceptar</string>
+    <string name="friends_action_decline">Rechazar solicitud</string>
+    <string name="friends_action_cancel">Cancelar solicitud</string>
+    <string name="friends_status_sent">Solicitud enviada</string>
+    <string name="friends_status_friends">Amigos</string>
+    <string name="friends_status_you">Tú</string>
+    <string name="friends_cd_open_profile">Abrir perfil de %1$s, \@%2$s</string>
+    <string name="friends_message_request_sent">Solicitud de amistad enviada.</string>
+    <string name="friends_message_became_friends">¡Ahora son amigos!</string>
+    <string name="friends_message_declined">Solicitud rechazada.</string>
+    <string name="friends_message_canceled">Solicitud cancelada.</string>
+    <string name="friends_message_username_saved">\@usuario guardado.</string>
+    <string name="friends_message_connected">Cuenta conectada.</string>
+
+    <!-- Perfil de un amigo -->
+    <string name="friend_profile_updated">Actualizado %1$s</string>
+    <string name="friend_profile_watcher_rate">El Vigilante acierta %1$d%%</string>
+    <string name="friend_profile_stat_player_wins">Venció al Vigilante</string>
+    <string name="friend_profile_heroes_title">Héroes desbloqueados</string>
+    <string name="friend_profile_heroes_empty">Ningún héroe desbloqueado todavía.</string>
+    <plurals name="friend_profile_all_heroes">
+        <item quantity="one">Ver el %1$d héroe</item>
+        <item quantity="many">Ver los %1$d héroes</item>
+        <item quantity="other">Ver los %1$d héroes</item>
+    </plurals>
+    <string name="friend_profile_hero_locked">Haz que el Vigilante adivine a %1$s para ver su ficha.</string>
+    <string name="friend_profile_remove">Eliminar amistad</string>
+    <string name="friend_profile_remove_title">¿Eliminar la amistad con %1$s?</string>
+    <string name="friend_profile_remove_message">Dejarán de ver el perfil del otro. Puedes enviar una nueva solicitud después.</string>
+    <string name="friend_profile_remove_confirm">Eliminar</string>
+    <string name="friend_profile_not_friends">Ya no son amigos.</string>
+    <string name="friend_profile_not_found">Este jugador ya no tiene perfil en línea.</string>
+
+    <!-- Logros -->
+    <string name="achievements_title">Logros</string>
+    <string name="achievements_show_all">Ver todos (%1$d)</string>
+    <string name="achievement_cd_unlocked">%1$s, desbloqueado. %2$s %3$d de %4$d.</string>
+    <string name="achievement_cd_locked">%1$s, todavía bloqueado. %2$s %3$d de %4$d.</string>
+    <string name="achievement_first_hero">Primero de la colección</string>
+    <string name="achievement_first_hero_desc">Desbloquea tu primer héroe.</string>
+    <string name="achievement_heroes_10">Coleccionista</string>
+    <string name="achievement_heroes_10_desc">Desbloquea 10 héroes.</string>
+    <string name="achievement_heroes_25">Archivista</string>
+    <string name="achievement_heroes_25_desc">Desbloquea 25 héroes.</string>
+    <string name="achievement_heroes_50">Guardián del Multiverso</string>
+    <string name="achievement_heroes_50_desc">Desbloquea 50 héroes.</string>
+    <string name="achievement_avengers_5">¡Vengadores, unidos!</string>
+    <string name="achievement_avengers_5_desc">Desbloquea 5 Vengadores.</string>
+    <string name="achievement_xmen_5">Escuela Xavier</string>
+    <string name="achievement_xmen_5_desc">Desbloquea 5 X-Men.</string>
+    <string name="achievement_guardians_3">Yo soy Groot</string>
+    <string name="achievement_guardians_3_desc">Desbloquea 3 Guardianes de la Galaxia.</string>
+    <string name="achievement_fantastic_four">Cuarteto completo</string>
+    <string name="achievement_fantastic_four_desc">Desbloquea 4 miembros de los Cuatro Fantásticos.</string>
+    <string name="achievement_villains_5">Lado oscuro</string>
+    <string name="achievement_villains_5_desc">Desbloquea 5 villanos.</string>
+    <string name="achievement_games_10">Habitual</string>
+    <string name="achievement_games_10_desc">Juega 10 partidas.</string>
+    <string name="achievement_games_50">Maratonista</string>
+    <string name="achievement_games_50_desc">Juega 50 partidas.</string>
+    <string name="achievement_beat_watcher">Engañé al Vigilante</string>
+    <string name="achievement_beat_watcher_desc">Vence al Vigilante una vez.</string>
+    <string name="achievement_beat_watcher_10">Maestro del disfraz</string>
+    <string name="achievement_beat_watcher_10_desc">Vence al Vigilante 10 veces.</string>
+
+    <!-- Inicio de sesión y registro -->
+    <string name="auth_title_sign_in">Inicia sesión en tu cuenta</string>
+    <string name="auth_title_sign_up">Crea tu cuenta</string>
+    <string name="auth_mode_sign_in">Iniciar sesión</string>
+    <string name="auth_mode_sign_up">Crear cuenta</string>
+    <string name="auth_hint_name">Nombre</string>
+    <string name="auth_hint_email">Correo electrónico</string>
+    <string name="auth_hint_password">Contraseña</string>
+    <string name="auth_password_helper">Mínimo 6 caracteres</string>
+    <string name="auth_submit_sign_in">Entrar</string>
+    <string name="auth_submit_sign_up">Crear cuenta</string>
+    <string name="auth_reason_unlock">Inicia sesión para desbloquear a %1$s en tu catálogo.</string>
+    <string name="auth_local_note">Tu cuenta y tu catálogo se guardan en este dispositivo. Para jugar con amigos, conecta tu cuenta en la pestaña de amigos.</string>
+    <string name="auth_error_name_required">Escribe tu nombre.</string>
+    <string name="auth_error_invalid_email">Escribe un correo electrónico válido.</string>
+    <string name="auth_error_email_in_use">Ya existe una cuenta con ese correo.</string>
+    <string name="auth_error_weak_password">La contraseña debe tener al menos 6 caracteres.</string>
+    <string name="auth_error_wrong_credentials">Correo o contraseña incorrectos.</string>
+
+    <!-- Resultado de la partida -->
+    <string name="result_home">Volver al inicio</string>
+    <string name="result_unlocked_new">¡Nuevo héroe desbloqueado!</string>
+    <string name="result_unlocked_existing">Ya está en tu catálogo</string>
+    <string name="result_view_hero">Ver ficha del héroe</string>
+    <string name="result_locked_hint">El Vigilante no acertó, así que %1$s sigue bloqueado en el catálogo. Haz que el Vigilante acierte para desbloquearlo.</string>
+    <string name="result_sign_in_to_unlock_hint">¡El Vigilante acertó! Inicia sesión para desbloquear a %1$s en el catálogo.</string>
+    <string name="result_sign_in_to_unlock">Iniciar sesión y desbloquear</string>
+
+    <!-- Catálogo -->
+    <string name="catalog_title">Catálogo de héroes</string>
+    <string name="catalog_how_to_unlock">Piensa en un héroe y haz que el Vigilante acierte para desbloquearlo.</string>
+    <string name="catalog_filter_unlocked">Mis héroes (%1$d)</string>
+    <string name="catalog_filter_all">Todos (%1$d)</string>
+    <string name="catalog_search_hint">Buscar en mis héroes</string>
+    <string name="catalog_cd_locked">Héroe bloqueado</string>
+    <string name="catalog_locked_hint">Bloqueado. Piensa en este héroe en una partida y haz que el Vigilante acierte.</string>
+    <string name="catalog_cd_progress">%1$d de %2$d héroes desbloqueados</string>
+    <string name="catalog_empty_title">Aún no hay héroes</string>
+    <string name="catalog_empty_body">Piensa en un héroe y haz que el Vigilante acierte. Aparecerá aquí con su ficha completa.</string>
+    <string name="catalog_search_empty_title">No se encontró nada</string>
+    <string name="catalog_search_empty_body">La búsqueda solo incluye los héroes que ya desbloqueaste.</string>
+    <plurals name="catalog_of_total">
+        <item quantity="one">de %1$d héroe</item>
+        <item quantity="many">de %1$d héroes</item>
+        <item quantity="other">de %1$d héroes</item>
+    </plurals>
+    <string name="catalog_unlocked_only">desbloqueados</string>
+
+    <!-- Ficha del héroe -->
+    <string name="hero_cd_poster">Ver imagen ampliada</string>
+    <string name="hero_cd_open_web">Abrir en Comic Vine</string>
+    <string name="hero_offline_copy">Sin conexión: mostrando la ficha guardada.</string>
+    <string name="hero_attribution">Datos e imágenes: Comic Vine</string>
+    <string name="hero_locked_message">Este héroe todavía está bloqueado. Piensa en él en una partida y haz que el Vigilante acierte para ver su ficha.</string>
+    <string name="hero_badge_unlocked">Desbloqueado</string>
+    <string name="hero_unlocked_on">Desbloqueado el %1$s</string>
+    <string name="hero_gender_male">Masculino</string>
+    <string name="hero_gender_female">Femenino</string>
+    <string name="hero_issue_number">N.º %1$s</string>
+    <string name="hero_untitled">Sin título</string>
+    <string name="hero_stat_appearances">Apariciones</string>
+    <string name="hero_stat_teams">Equipos</string>
+    <string name="hero_stat_powers">Poderes</string>
+    <string name="hero_section_identity">Identidad</string>
+    <string name="hero_section_biography">Biografía</string>
+    <string name="hero_section_powers">Poderes</string>
+    <string name="hero_section_teams">Equipos</string>
+    <string name="hero_section_allies">Aliados</string>
+    <string name="hero_section_enemies">Enemigos</string>
+    <string name="hero_section_team_allies">Equipos aliados</string>
+    <string name="hero_section_team_enemies">Equipos enemigos</string>
+    <string name="hero_section_creators">Creadores</string>
+    <string name="hero_section_movies">Películas</string>
+    <string name="hero_section_appearances">Apariciones</string>
+    <string name="hero_section_image">Imagen</string>
+    <string name="hero_section_record">Registro en Comic Vine</string>
+    <string name="hero_field_name">Nombre</string>
+    <string name="hero_field_real_name">Nombre real</string>
+    <string name="hero_field_aliases_count">Alias (%1$d)</string>
+    <string name="hero_field_gender">Género</string>
+    <string name="hero_field_birth">Nacimiento</string>
+    <string name="hero_field_origin">Origen</string>
+    <string name="hero_field_publisher">Editorial</string>
+    <string name="hero_field_first_appearance">Primera aparición</string>
+    <string name="hero_field_unlocked_on">Desbloqueado el</string>
+    <string name="hero_field_issue_appearances">Apariciones en números</string>
+    <string name="hero_field_died_in">Murió en (%1$d)</string>
+    <string name="hero_field_image_tags">Galerías</string>
+    <string name="hero_field_image_sizes">Tamaños disponibles</string>
+    <string name="hero_field_cv_id">ID en Comic Vine</string>
+    <string name="hero_field_date_added">Añadido el</string>
+    <string name="hero_field_date_updated">Última actualización</string>
+    <string name="hero_field_site_url">Página</string>
+    <string name="hero_field_api_url">Dirección en la API</string>
+    <string name="hero_list_issues">Números</string>
+    <string name="hero_list_story_arcs">Arcos argumentales</string>
+    <string name="hero_list_volumes">Volúmenes</string>
+    <string name="hero_list_deaths">Murió en</string>
+    <string name="hero_see_all">Ver todos (%1$s)</string>
+    <string name="hero_bio_expand">Leer biografía completa</string>
+    <string name="hero_bio_collapse">Contraer biografía</string>
+    <string name="hero_view_original_image">Ver imagen original</string>
+    <string name="hero_sheet_search">Buscar en la lista</string>
+    <string name="hero_sheet_empty">No se encontró nada.</string>
+
+    <!-- Traducción automática de los textos de Comic Vine (que solo existen en inglés) -->
+    <string name="content_language">es</string>
+    <string name="hero_translation_working">Traduciendo del inglés…</string>
+    <string name="hero_translation_working_biography">Traduciendo la biografía… %1$d%%</string>
+    <string name="hero_translation_done">Traducido automáticamente del inglés.</string>
+    <string name="hero_translation_original">Mostrando el texto original en inglés.</string>
+    <string name="hero_translation_needs_download">Comic Vine solo escribe en inglés. Para traducir en el dispositivo, descarga el paquete del idioma (unos 30 MB).</string>
+    <string name="hero_translation_no_connection">Conéctate a internet para descargar el paquete de traducción.</string>
+    <string name="hero_translation_failed">No se pudo traducir esta ficha.</string>
+    <string name="hero_translation_show_original">Ver original</string>
+    <string name="hero_translation_show_translation">Ver traducción</string>
+    <string name="hero_translation_download">Descargar</string>
+    <string name="hero_size_icon">icono</string>
+    <string name="hero_size_tiny">mini</string>
+    <string name="hero_size_thumb">miniatura</string>
+    <string name="hero_size_small">pequeña</string>
+    <string name="hero_size_medium">mediana</string>
+    <string name="hero_size_screen">pantalla</string>
+    <string name="hero_size_screen_large">pantalla grande</string>
+    <string name="hero_size_super">grande</string>
+    <string name="hero_size_original">original</string>
+
+    <!-- Edición del perfil -->
+    <string name="edit_change_banner">Cambiar banner</string>
+    <string name="edit_cd_change_banner">Cambiar el banner del perfil</string>
+    <string name="edit_cd_change_photo">Cambiar la foto del perfil</string>
+    <string name="edit_images_hint">Toca la foto o el banner para cambiarlos.</string>
+    <string name="edit_section_profile">Tus datos</string>
+    <string name="edit_section_password">Contraseña</string>
+    <string name="edit_section_account">Cuenta</string>
+    <string name="edit_hint_bio">Sobre ti</string>
+    <string name="edit_hint_current_password">Contraseña actual</string>
+    <string name="edit_hint_new_password">Nueva contraseña</string>
+    <string name="edit_email_password_helper">Confirma tu contraseña para cambiar el correo.</string>
+    <string name="edit_save_profile">Guardar cambios</string>
+    <string name="edit_change_password">Cambiar contraseña</string>
+    <string name="edit_delete_account">Eliminar cuenta</string>
+    <string name="edit_delete_explanation">Eliminar la cuenta borra tu colección, tu foto y tu banner de este dispositivo y, si está conectada a amigos, también la cuenta en línea. Las estadísticas de las partidas se mantienen.</string>
+    <string name="edit_delete_confirm_title">¿Eliminar tu cuenta?</string>
+    <string name="edit_delete_confirm_message">Esto no se puede deshacer. Escribe tu contraseña para confirmar.</string>
+    <string name="edit_photo_options_title">Foto del perfil</string>
+    <string name="edit_banner_options_title">Banner del perfil</string>
+    <string name="edit_option_choose_image">Elegir de la galería</string>
+    <string name="edit_option_remove_image">Quitar</string>
+    <string name="edit_saved">Perfil actualizado.</string>
+    <string name="edit_password_changed">Contraseña cambiada.</string>
+    <string name="edit_image_updated">Imagen actualizada.</string>
+    <string name="edit_image_removed">Imagen quitada.</string>
+    <string name="edit_image_failed">No se pudo usar esa imagen. Prueba con otra.</string>
+    <string name="edit_account_deleted">Tu cuenta fue eliminada.</string>
+    <string name="edit_error_name_too_long">El nombre puede tener como máximo 40 caracteres.</string>
+    <string name="edit_error_bio_too_long">La bio puede tener como máximo 120 caracteres.</string>
+    <string name="edit_error_wrong_password">Contraseña actual incorrecta.</string>
+    <string name="edit_error_delete_online_unavailable">Sin conexión. Conéctate a internet para eliminar también tu cuenta de amigos en línea.</string>
+
+    <!-- Títulos del jugador -->
+    <string name="rank_newcomer">Recién llegado</string>
+    <string name="rank_curious">Curioso</string>
+    <string name="rank_challenger">Retador</string>
+    <string name="rank_veteran">Veterano</string>
+    <string name="rank_legend">Leyenda del Multiverso</string>
+
+    <!-- Configuración -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_section_language">Idioma</string>
+    <string name="settings_language">Idioma de la app</string>
+    <string name="settings_language_system">Automático (idioma del dispositivo)</string>
+    <string name="settings_section_game">Partida</string>
+    <string name="settings_haptics">Vibrar al responder</string>
+    <string name="settings_haptics_summary">Una vibración suave confirma cada respuesta.</string>
+    <string name="settings_keep_screen_on">Mantener la pantalla encendida</string>
+    <string name="settings_keep_screen_on_summary">La pantalla no se apaga mientras piensas tu respuesta.</string>
+    <string name="settings_section_data">Datos</string>
+    <string name="settings_clear_cache">Borrar caché</string>
+    <string name="settings_cache_summary">%1$s en imágenes y fichas de héroes descargadas</string>
+    <string name="settings_cache_calculating">Calculando…</string>
+    <string name="settings_clear_cache_confirm">Las imágenes y fichas de héroes se volverán a descargar cuando abras cada pantalla, lo que requiere internet. Tu cuenta, tu catálogo y tus partidas no se borran.</string>
+    <string name="settings_cache_cleared">Caché borrada.</string>
+    <string name="settings_forget_learning">Olvidar lo que aprendí</string>
+    <string name="settings_forget_summary">Borra las estadísticas y lo que el Vigilante aprendió de tus partidas.</string>
+    <string name="settings_forget_confirm">El Vigilante olvidará las estadísticas y todo lo que aprendió de tus partidas. ¿Continuar?</string>
+    <string name="settings_forget_done">Aprendizaje borrado.</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_version">Versión</string>
+    <string name="settings_data_source">Datos e imágenes</string>
+    <string name="settings_disclaimer">O Vigia es un juego hecho por fans, sin relación con Marvel ni con Comic Vine. Los personajes y las marcas pertenecen a sus respectivos dueños.</string>
+    <string name="action_forget">Olvidar</string>
+    <string name="action_clear">Borrar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_saving">Guardando…</string>
+
+    <!-- Preguntas -->
+    <string name="question_number">Pregunta n.º %1$d:</string>
+    <string name="question_placeholder">Cargando personajes…</string>
+    <string name="btn_sim">Sí</string>
+    <string name="btn_nao">No</string>
+    <string name="btn_provavelmente_sim">Probablemente sí</string>
+    <string name="btn_provavelmente_nao">Probablemente no</string>
+    <string name="btn_nao_sei">No sé</string>
+    <string name="btn_retry">Reintentar</string>
+
+    <!-- Errores de carga -->
+    <string name="error_no_connection">Sin conexión a internet.</string>
+    <string name="error_rate_limited">Comic Vine está recibiendo demasiadas solicitudes en este momento. Vuelve a intentarlo en unos minutos.</string>
+    <string name="error_not_configured">La clave de Comic Vine no está configurada o fue rechazada.</string>
+    <string name="error_server">No se pudieron cargar los personajes.</string>
+    <string name="error_empty_roster">No se encontró ningún personaje válido.</string>
+
+    <!-- Intento -->
+    <string name="answer_intro">Creo que es:</string>
+
+    <!-- Continuar -->
+    <string name="continue_prompt_question">¿Quieres continuar?</string>
+
+    <!-- Opciones y revelación -->
+    <string name="select_alternative_title">Elige el personaje en el que pensaste:</string>
+    <string name="btn_none_of_alternatives">No aparece</string>
+    <string name="btn_validar">Confirmar</string>
+    <string name="reveal_title">¿En quién pensaste?</string>
+    <string name="reveal_subtitle">Cuéntamelo y aprenderé para la próxima.</string>
+    <string name="reveal_search_hint">Buscar personaje</string>
+    <string name="reveal_empty">No se encontró ningún personaje.</string>
+    <string name="btn_skip">Omitir</string>
+
+    <!-- Resultado -->
+    <string name="victory_message">¡Gané!</string>
+    <string name="defeat_message">¡Ganaste! No logré adivinar tu personaje.</string>
+    <string name="alternate_correct_message">¡Uf! ¡Sí era %1$s!</string>
+    <string name="reveal_thanks_message">¡Ganaste! La próxima vez adivino a %1$s.</string>
+
+    <!-- Preguntas del juego: una idea por pregunta, cortas y directas. Claves en QuestionKeys. -->
+    <string name="q_gender_m">¿Tu personaje es de género masculino?</string>
+    <string name="q_origin_human">¿Tu personaje nació humano y sin poderes?</string>
+    <string name="q_origin_mutant">¿Tu personaje es un mutante?</string>
+    <string name="q_origin_alien">¿Tu personaje vino de otro planeta?</string>
+    <string name="q_origin_god_eternal">¿Tu personaje es un dios o un Eterno?</string>
+    <string name="q_origin_robot">¿Tu personaje es un robot o un androide?</string>
+    <string name="q_origin_radiation">¿Tu personaje obtuvo sus poderes por la radiación?</string>
+    <string name="q_origin_cyborg">¿Tu personaje es un cíborg?</string>
+    <string name="q_origin_animal">¿Tu personaje es un animal?</string>
+    <string name="q_team_avengers">¿Tu personaje ha sido alguna vez un Vengador?</string>
+    <string name="q_team_xmen">¿Tu personaje ha formado parte de los X-Men?</string>
+    <string name="q_team_guardians">¿Tu personaje ha sido alguna vez un Guardián de la Galaxia?</string>
+    <string name="q_team_f4">¿Tu personaje forma parte de los 4 Fantásticos?</string>
+    <string name="q_team_inhumans">¿Tu personaje es un Inhumano?</string>
+    <string name="q_team_eternals">¿Tu personaje es un Eterno?</string>
+    <string name="q_power_forca">¿Tu personaje tiene fuerza sobrehumana?</string>
+    <string name="q_power_voo">¿Tu personaje puede volar?</string>
+    <string name="q_power_cura">¿Tu personaje se cura rápido de las heridas?</string>
+    <string name="q_power_genio">¿Tu personaje es un genio?</string>
+    <string name="q_power_invisibilidade">¿Tu personaje puede volverse invisible?</string>
+    <string name="q_power_telepatia">¿Tu personaje puede leer mentes?</string>
+    <string name="q_power_telecinese">¿Tu personaje puede mover objetos con la mente?</string>
+    <string name="q_power_magia">¿Tu personaje usa magia?</string>
+    <string name="q_power_armas">¿Tu personaje pelea con armas o artes marciales?</string>
+    <string name="q_power_teia">¿Tu personaje lanza telarañas?</string>
+    <string name="q_power_elasticidade">¿Tu personaje puede estirar su cuerpo?</string>
+    <string name="q_power_imortal">¿Tu personaje es inmortal?</string>
+    <string name="q_power_tamanho">¿Tu personaje puede cambiar de tamaño?</string>
+    <string name="q_power_teletransporte">¿Tu personaje puede teletransportarse?</string>
+    <string name="q_power_energia">¿Tu personaje dispara ráfagas de energía con su cuerpo?</string>
+    <string name="q_power_sentidos">¿Tu personaje tiene los sentidos agudizados?</string>
+    <string name="q_power_tecnologia">¿Los poderes de tu personaje vienen de una armadura o un equipo?</string>
+    <string name="q_power_invulneravel">¿La piel de tu personaje detiene las balas?</string>
+    <string name="q_power_velocidade">¿Tu personaje tiene supervelocidad?</string>
+    <string name="q_power_absorver">¿Tu personaje puede absorber los poderes de otras personas?</string>
+    <string name="q_power_realidade">¿Tu personaje puede alterar la realidad?</string>
+    <string name="q_power_atravessar">¿Tu personaje puede atravesar paredes?</string>
+    <string name="q_power_mimetismo">¿Tu personaje puede copiar técnicas de lucha con solo observarlas?</string>
+    <string name="q_power_metamorfose">¿Tu personaje puede cambiar de apariencia?</string>
+    <string name="q_power_viagem_no_tempo">¿Tu personaje puede viajar en el tiempo?</string>
+    <string name="q_power_ilusao">¿Tu personaje crea ilusiones?</string>
+    <string name="q_power_jovem">¿Tu personaje empezó a ser héroe siendo adolescente?</string>
+    <string name="q_is_villain">¿Tu personaje es un villano?</string>
+</resources>

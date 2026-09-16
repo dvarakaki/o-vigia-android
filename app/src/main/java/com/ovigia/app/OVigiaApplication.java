@@ -1,47 +1,28 @@
 package com.ovigia.app;
 
 import android.app.Application;
+import android.os.StrictMode;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-import androidx.lifecycle.ViewModelStoreOwner;
+public class OVigiaApplication extends Application {
 
-import com.ovigia.app.data.CharacterRepository;
-import com.ovigia.app.data.ComicVineCharacterRepository;
-import com.ovigia.app.game.GameViewModelFactory;
-import com.ovigia.app.learning.LearningStore;
-
-/**
- * Dona do {@link ViewModelStore} usado pelo {@code GameViewModel}.
- *
- * O jogo acontece em duas Activities (Perguntas e Resposta), não em
- * fragments de uma única tela — então um ViewModel "por Activity" não
- * bastaria para compartilhar o estado da partida entre as duas. Ancorar o
- * ViewModelStore na Application (em vez de reintroduzir um singleton manual)
- * mantém o padrão oficial de ViewModel/LiveData: sobrevive rotação de tela,
- * observadores somem sozinhos com o ciclo de vida da Activity.
- */
-public class OVigiaApplication extends Application implements ViewModelStoreOwner {
-
-    private final ViewModelStore viewModelStore = new ViewModelStore();
-    private CharacterRepository characterRepository;
-    private LearningStore learningStore;
+    private AppContainer container;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        learningStore = new LearningStore(this);
-        characterRepository = new ComicVineCharacterRepository(this, learningStore);
+        if (BuildConfig.DEBUG) {
+            // Pega I/O e vazamentos na main thread durante o desenvolvimento.
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads().detectDiskWrites().detectNetwork()
+                    .penaltyLog().build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectLeakedClosableObjects().detectActivityLeaks()
+                    .penaltyLog().build());
+        }
+        container = new AppContainer(this);
     }
 
-    @NonNull
-    @Override
-    public ViewModelStore getViewModelStore() {
-        return viewModelStore;
-    }
-
-    public ViewModelProvider.Factory gameViewModelFactory() {
-        return new GameViewModelFactory(characterRepository, learningStore);
+    public AppContainer container() {
+        return container;
     }
 }

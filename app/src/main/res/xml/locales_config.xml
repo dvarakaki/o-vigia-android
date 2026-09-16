@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Idiomas oferecidos nas configurações do Android 13+ (Apps > O Vigia > Idioma).
+  Precisa acompanhar settings/AppLanguage e as pastas values-*; AppLanguageTest confere.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="pt-BR" />
+    <locale android:name="en" />
+    <locale android:name="es" />
+    <locale android:name="fr" />
+</locale-config>

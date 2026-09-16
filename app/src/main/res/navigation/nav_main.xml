@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.ovigia.app.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_game"
+            app:destination="@id/game_graph"
+            app:enterAnim="@anim/screen_enter"
+            app:exitAnim="@anim/screen_exit"
+            app:popEnterAnim="@anim/screen_pop_enter"
+            app:popExitAnim="@anim/screen_pop_exit" />
+    </fragment>
+
+    <!-- Configurações: idioma, partida, dados e sobre. Não exige sessão. -->
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.ovigia.app.ui.settings.SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
+
+    <!-- Exige sessão: sem login, a tela inicial abre o authFragment no lugar dela. -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.ovigia.app.ui.profile.ProfileFragment"
+        tools:layout="@layout/fragment_profile" />
+
+    <!-- Edição do perfil; sai sozinha se a sessão acabar ou a conta for excluída. -->
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.ovigia.app.ui.profile.EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <!-- Amigos online (Firebase); exige sessão local como o perfil. -->
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.ovigia.app.ui.friends.FriendsFragment"
+        tools:layout="@layout/fragment_friends" />
+
+    <!-- Perfil completo de um amigo. -->
+    <fragment
+        android:id="@+id/friendProfileFragment"
+        android:name="com.ovigia.app.ui.friends.FriendProfileFragment"
+        tools:layout="@layout/fragment_friend_profile">
+        <argument
+            android:name="friendUid"
+            app:argType="string" />
+    </fragment>
+
+    <!-- Catálogo de heróis da conta; exige sessão como o perfil. -->
+    <fragment
+        android:id="@+id/catalogFragment"
+        android:name="com.ovigia.app.ui.catalog.CatalogFragment"
+        tools:layout="@layout/fragment_catalog" />
+
+    <!-- Ficha completa de um herói desbloqueado. -->
+    <fragment
+        android:id="@+id/heroDetailFragment"
+        android:name="com.ovigia.app.ui.catalog.HeroDetailFragment"
+        tools:layout="@layout/fragment_hero_detail">
+        <argument
+            android:name="characterId"
+            app:argType="integer" />
+    </fragment>
+
+    <!--
+      Login/cadastro. Com nextDestination (perfil, catálogo) abre esse destino ao
+      entrar; sem ele volta para quem abriu, avisando pelo SavedStateHandle
+      (ver AuthFragment).
+    -->
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.ovigia.app.ui.auth.AuthFragment"
+        tools:layout="@layout/fragment_auth">
+        <argument
+            android:name="nextDestination"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="reason"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <!-- Fim de partida com personagem conhecido; fica logo acima da tela inicial. -->
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.ovigia.app.ui.result.ResultFragment"
+        tools:layout="@layout/fragment_art_panel">
+        <argument
+            android:name="characterId"
+            app:argType="integer" />
+        <argument
+            android:name="characterName"
+            app:argType="string" />
+        <argument
+            android:name="imageUrl"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="message"
+            app:argType="string" />
+        <!-- LearningStore.Outcome: decide se o herói é desbloqueado. -->
+        <argument
+            android:name="outcome"
+            app:argType="string" />
+    </fragment>
+
+    <!--
+      Grafo da partida: o GameViewModel vive no escopo deste grafo, então nasce
+      ao entrar na partida e é destruído ao sair dela. A navegação entre as
+      telas é disparada por GameEvents (ver GameNavigator).
+    -->
+    <navigation
+        android:id="@+id/game_graph"
+        app:startDestination="@id/questionsFragment">
+
+        <fragment
+            android:id="@+id/questionsFragment"
+            android:name="com.ovigia.app.ui.game.QuestionsFragment"
+            tools:layout="@layout/fragment_art_panel" />
+
+        <fragment
+            android:id="@+id/guessFragment"
+            android:name="com.ovigia.app.ui.game.GuessFragment"
+            tools:layout="@layout/fragment_art_panel">
+            <argument
+                android:name="characterId"
+                app:argType="integer" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/continueFragment"
+            android:name="com.ovigia.app.ui.game.ContinueFragment"
+            tools:layout="@layout/fragment_art_panel" />
+
+        <fragment
+            android:id="@+id/alternativesFragment"
+            android:name="com.ovigia.app.ui.game.AlternativesFragment"
+            tools:layout="@layout/fragment_character_list" />
+
+        <fragment
+            android:id="@+id/revealFragment"
+            android:name="com.ovigia.app.ui.game.RevealFragment"
+            tools:layout="@layout/fragment_character_list" />
+    </navigation>
+</navigation>

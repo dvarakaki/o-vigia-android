@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Vocabulário fechado da Comic Vine: poderes, origens e galerias de imagem.
+  Tradução curada (o tradutor automático erraria termos como "Power Suit").
+  Cada entrada precisa de uma linha em translation/ComicVineGlossary.java —
+  ComicVineGlossaryTest confere.
+-->
+<resources>
+
+    <!-- Origens -->
+    <string name="cv_origin_mutant">Mutante</string>
+    <string name="cv_origin_cyborg">Ciborgue</string>
+    <string name="cv_origin_alien">Alienígena</string>
+    <string name="cv_origin_human">Humano</string>
+    <string name="cv_origin_robot">Robô</string>
+    <string name="cv_origin_radiation">Radiação</string>
+    <string name="cv_origin_god_eternal">Deus/Eterno</string>
+    <string name="cv_origin_animal">Animal</string>
+    <string name="cv_origin_other">Outra</string>
+    <string name="cv_origin_infection">Infecção</string>
+
+    <!-- Galerias de imagem -->
+    <string name="cv_gallery_all_images">Todas as imagens</string>
+
+    <!-- Poderes -->
+    <string name="cv_power_flight">Voo</string>
+    <string name="cv_power_super_strength">Superforça</string>
+    <string name="cv_power_super_speed">Supervelocidade</string>
+    <string name="cv_power_agility">Agilidade</string>
+    <string name="cv_power_stamina">Resistência física</string>
+    <string name="cv_power_invulnerability">Invulnerabilidade</string>
+    <string name="cv_power_telepathy">Telepatia</string>
+    <string name="cv_power_telekinesis">Telecinese</string>
+    <string name="cv_power_intellect">Intelecto</string>
+    <string name="cv_power_teleport">Teletransporte</string>
+    <string name="cv_power_radar_sense">Sentido de radar</string>
+    <string name="cv_power_psychic">Poderes psíquicos</string>
+    <string name="cv_power_force_field">Campo de força</string>
+    <string name="cv_power_blast_power">Rajadas de energia</string>
+    <string name="cv_power_healing">Cura acelerada</string>
+    <string name="cv_power_magic">Magia</string>
+    <string name="cv_power_weapon_master">Mestre em armas</string>
+    <string name="cv_power_super_sight">Visão sobre-humana</string>
+    <string name="cv_power_super_smell">Olfato sobre-humano</string>
+    <string name="cv_power_super_hearing">Audição sobre-humana</string>
+    <string name="cv_power_invisibility">Invisibilidade</string>
+    <string name="cv_power_phasing">Intangibilidade</string>
+    <string name="cv_power_chameleon">Camuflagem</string>
+    <string name="cv_power_shape_shifter">Metamorfose</string>
+    <string name="cv_power_magnetism">Magnetismo</string>
+    <string name="cv_power_fire_control">Controle do fogo</string>
+    <string name="cv_power_implants">Implantes</string>
+    <string name="cv_power_feral">Instinto selvagem</string>
+    <string name="cv_power_psionic">Poderes psiônicos</string>
+    <string name="cv_power_insanely_rich">Riqueza absurda</string>
+    <string name="cv_power_power_suit">Armadura tecnológica</string>
+    <string name="cv_power_radiation">Radiação</string>
+    <string name="cv_power_elasticity">Elasticidade</string>
+    <string name="cv_power_unarmed_combat">Combate desarmado</string>
+    <string name="cv_power_gadgets">Engenhocas</string>
+    <string name="cv_power_weather_control">Controle do clima</string>
+    <string name="cv_power_divine_powers">Poderes divinos</string>
+    <string name="cv_power_siphon_abilities">Absorção de poderes</string>
+    <string name="cv_power_size_manipulation">Alteração de tamanho</string>
+    <string name="cv_power_immortal">Imortalidade</string>
+    <string name="cv_power_necromancy">Necromancia</string>
+    <string name="cv_power_vampirism">Vampirismo</string>
+    <string name="cv_power_electricity_control">Controle da eletricidade</string>
+    <string name="cv_power_ice_control">Controle do gelo</string>
+    <string name="cv_power_sub_mariner">Adaptação aquática</string>
+    <string name="cv_power_wall_clinger">Aderência a paredes</string>
+    <string name="cv_power_mesmerize">Encantamento hipnótico</string>
+    <string name="cv_power_penance_stare">Olhar da Penitência</string>
+    <string name="cv_power_sonic_scream">Grito sônico</string>
+    <string name="cv_power_escape_artist">Escapismo</string>
+    <string name="cv_power_tracking">Rastreamento</string>
+    <string name="cv_power_astral_projection">Projeção astral</string>
+    <string name="cv_power_danger_sense">Sentido de perigo</string>
+    <string name="cv_power_possession">Possessão</string>
+    <string name="cv_power_sand_manipulation">Manipulação de areia</string>
+    <string name="cv_power_adaptive">Adaptabilidade</string>
+    <string name="cv_power_electronic_interaction">Interação eletrônica</string>
+    <string name="cv_power_animation">Animação de objetos</string>
+    <string name="cv_power_probability_manipulation">Manipulação da probabilidade</string>
+    <string name="cv_power_super_eating">Apetite sobre-humano</string>
+    <string name="cv_power_precognition">Precognição</string>
+    <string name="cv_power_energy_enhanced_strike">Golpe energizado</string>
+    <string name="cv_power_technopathy">Tecnopatia</string>
+    <string name="cv_power_inertia_absorption">Absorção de inércia</string>
+    <string name="cv_power_light_projection">Projeção de luz</string>
+    <string name="cv_power_holographic_projection">Projeção holográfica</string>
+    <string name="cv_power_reality_manipulation">Manipulação da realidade</string>
+    <string name="cv_power_swordsmanship">Esgrima</string>
+    <string name="cv_power_electronic_disruption">Interferência eletrônica</string>
+    <string name="cv_power_levitation">Levitação</string>
+    <string name="cv_power_soul_absorption">Absorção de almas</string>
+    <string name="cv_power_duplication">Duplicação</string>
+    <string name="cv_power_emotion_control">Controle das emoções</string>
+    <string name="cv_power_matter_absorption">Absorção de matéria</string>
+    <string name="cv_power_dimensional_manipulation">Manipulação dimensional</string>
+    <string name="cv_power_animal_control">Controle de animais</string>
+    <string name="cv_power_enhance_mutation">Amplificação de mutações</string>
+    <string name="cv_power_omni_lingual">Poliglota universal</string>
+    <string name="cv_power_postcognition">Pós-cognição</string>
+    <string name="cv_power_shadowmeld">Fusão com as sombras</string>
+    <string name="cv_power_energy_shield">Escudo de energia</string>
+    <string name="cv_power_time_travel">Viagem no tempo</string>
+    <string name="cv_power_siphon_lifeforce">Absorção de força vital</string>
+    <string name="cv_power_sense_death">Percepção da morte</string>
+    <string name="cv_power_darkforce_manipulation">Manipulação da Força Sombria</string>
+    <string name="cv_power_vibration_wave">Ondas de vibração</string>
+    <string name="cv_power_power_mimicry">Imitação de poderes</string>
+    <string name="cv_power_empathy">Empatia</string>
+    <string name="cv_power_gravity_control">Controle da gravidade</string>
+    <string name="cv_power_darkness_manipulation">Manipulação das trevas</string>
+    <string name="cv_power_illusion_casting">Criação de ilusões</string>
+    <string name="cv_power_heat_vision">Visão de calor</string>
+    <string name="cv_power_psychometry">Psicometria</string>
+    <string name="cv_power_wind_bursts">Rajadas de vento</string>
+    <string name="cv_power_density_control">Controle da densidade</string>
+    <string name="cv_power_earth_manipulation">Manipulação da terra</string>
+    <string name="cv_power_marksmanship">Pontaria</string>
+    <string name="cv_power_genetic_manipulation">Manipulação genética</string>
+    <string name="cv_power_time_manipulation">Manipulação do tempo</string>
+    <string name="cv_power_power_item">Objeto de poder</string>
+    <string name="cv_power_plant_control">Controle das plantas</string>
+    <string name="cv_power_claws">Garras</string>
+    <string name="cv_power_death_touch">Toque da morte</string>
+    <string name="cv_power_hypnosis">Hipnose</string>
+    <string name="cv_power_poisonous">Veneno</string>
+    <string name="cv_power_pheromone_control">Controle de feromônios</string>
+    <string name="cv_power_water_control">Controle da água</string>
+    <string name="cv_power_chemical_secretion">Secreção química</string>
+    <string name="cv_power_energy_absorption">Absorção de energia</string>
+    <string name="cv_power_energy_manipulation">Manipulação de energia</string>
+    <string name="cv_power_cosmic_awareness">Consciência cósmica</string>
+    <string name="cv_power_willpower_constructs">Construtos de força de vontade</string>
+    <string name="cv_power_heat_generation">Geração de calor</string>
+    <string name="cv_power_energy_constructs">Construtos de energia</string>
+    <string name="cv_power_synaesthesia">Sinestesia</string>
+    <string name="cv_power_voice_manipulation">Controle pela voz</string>
+    <string name="cv_power_chemical_absorption">Absorção química</string>
+    <string name="cv_power_stealth">Furtividade</string>
+    <string name="cv_power_berserker_strength">Fúria berserker</string>
+    <string name="cv_power_leadership">Liderança</string>
+    <string name="cv_power_longevity">Longevidade</string>
+    <string name="cv_power_bone_growth">Controle do crescimento ósseo</string>
+    <string name="cv_power_webslinger">Lançador de teias</string>
+    <string name="cv_power_ice_breath">Sopro congelante</string>
+    <string name="cv_power_flame_breath">Sopro de fogo</string>
+    <string name="cv_power_hellfire_control">Controle do fogo infernal</string>
+    <string name="cv_power_prehensile_hair">Cabelo preênsil</string>
+    <string name="cv_power_blood_control">Controle do sangue</string>
+</resources>

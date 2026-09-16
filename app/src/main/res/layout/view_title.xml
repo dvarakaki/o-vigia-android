@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:contentDescription="@string/app_name"
+    android:focusable="true"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/minangkabau"
+        android:importantForAccessibility="no"
+        android:shadowColor="#AA000000"
+        android:shadowRadius="8"
+        android:text="@string/title_o"
+        android:textColor="@color/white"
+        android:textSize="60sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:fontFamily="@font/minangkabau"
+        android:importantForAccessibility="no"
+        android:shadowColor="#AA000000"
+        android:shadowRadius="8"
+        android:text="@string/title_vigia"
+        android:textColor="@color/vigia_blue"
+        android:textSize="60sp" />
+</LinearLayout>

@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Perfil do jogador: banner + foto, nível, placar Vigia × você, números,
+  coleção, personagens mais pensados e partidas recentes.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vigia_space"
+    tools:ignore="Overdraw">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--
+              Banner de ponta a ponta (passa por trás da barra de status): imagem do
+              jogador ou a galáxia do app tingida de azul-violeta com brilho dourado.
+            -->
+            <FrameLayout
+                android:id="@+id/bannerFrame"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/profile_banner_height">
+
+                <ImageView
+                    android:id="@+id/imageBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_galaxy" />
+
+                <View
+                    android:id="@+id/bannerTint"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_banner_default_tint" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_banner_scrim" />
+
+                <!-- Os ícones rolam junto com o banner: nunca ficam por cima dos cards. -->
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    style="@style/Widget.OVigia.IconButton.Scrim"
+                    android:layout_gravity="start|top"
+                    android:layout_margin="@dimen/bar_margin"
+                    android:contentDescription="@string/cd_back"
+                    android:src="@drawable/ic_arrow_back" />
+
+                <ImageButton
+                    android:id="@+id/btnEdit"
+                    style="@style/Widget.OVigia.IconButton.Scrim"
+                    android:layout_gravity="end|top"
+                    android:layout_margin="@dimen/bar_margin"
+                    android:contentDescription="@string/cd_edit_profile"
+                    android:src="@drawable/ic_edit" />
+            </FrameLayout>
+
+            <!-- Margem negativa aqui (e não na foto): o container sobe sobre o banner e nada é recortado. -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/avatar_profile_overlap">
+
+                <LinearLayout
+                    android:id="@+id/content"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/screen_margin"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_max="@dimen/content_max_width">
+
+                    <!-- Foto: metade sobre o banner. -->
+                    <FrameLayout
+                        android:layout_width="@dimen/avatar_profile"
+                        android:layout_height="@dimen/avatar_profile"
+                        android:background="@drawable/bg_profile_avatar"
+                        android:padding="3dp">
+
+                        <ImageView
+                            android:id="@+id/imageAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:importantForAccessibility="no"
+                            android:padding="@dimen/avatar_icon_padding"
+                            android:src="@drawable/ic_person"
+                            app:tint="@color/vigia_gold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tvAccountName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:accessibilityHeading="true"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        tools:text="Davi" />
+
+                    <TextView
+                        android:id="@+id/tvAccountUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/vigia_gold"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:text="\@davi"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/tvAccountEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/white_70"
+                        android:textSize="14sp"
+                        tools:text="davi@exemplo.com" />
+
+                    <TextView
+                        android:id="@+id/tvAccountBio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        tools:text="Fã do Wolverine desde criança."
+                        tools:visibility="visible" />
+
+                    <!-- Nível -->
+                    <LinearLayout
+                        android:id="@+id/rankCard"
+                        style="@style/Widget.OVigia.DashboardCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:focusable="true"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvRank"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAppearance="@style/TextAppearance.OVigia.Label"
+                                tools:text="@string/rank_challenger" />
+
+                            <TextView
+                                android:id="@+id/tvRankCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:textColor="@color/white_70"
+                                android:textSize="13sp"
+                                tools:text="3 / 5" />
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/rankProgress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:importantForAccessibility="no"
+                            android:max="100"
+                            app:indicatorColor="@color/vigia_gold"
+                            app:indicatorTrackGapSize="0dp"
+                            app:trackColor="@color/white_10"
+                            app:trackCornerRadius="4dp"
+                            app:trackStopIndicatorSize="0dp"
+                            app:trackThickness="8dp"
+                            tools:progress="60" />
+
+                        <TextView
+                            android:id="@+id/tvRankProgress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/white_70"
+                            android:textSize="13sp"
+                            tools:text="Faltam 2 partidas para Veterano" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvEmpty"
+                        style="@style/Widget.OVigia.DashboardCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/gap"
+                        android:gravity="center"
+                        android:text="@string/profile_empty"
+                        android:textColor="@color/white_70"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <!-- Placar: anel com a taxa de acerto do Vigia + legenda. -->
+                    <LinearLayout
+                        android:id="@+id/scoreCard"
+                        style="@style/Widget.OVigia.DashboardCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/gap"
+                        android:baselineAligned="false"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:layout_width="@dimen/score_ring_size"
+                            android:layout_height="@dimen/score_ring_size"
+                            android:importantForAccessibility="noHideDescendants">
+
+                            <com.google.android.material.progressindicator.CircularProgressIndicator
+                                android:id="@+id/scoreRing"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:max="100"
+                                app:indicatorColor="@color/vigia_gold"
+                                app:indicatorSize="@dimen/score_ring_size"
+                                app:indicatorTrackGapSize="0dp"
+                                app:trackColor="@color/vigia_blue_light"
+                                app:trackCornerRadius="5dp"
+                                app:trackThickness="10dp"
+                                tools:progress="67" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvWinPercent"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:textColor="@color/white"
+                                    android:textSize="22sp"
+                                    android:textStyle="bold"
+                                    tools:text="67%" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="@string/profile_score_ring_caption"
+                                    android:textColor="@color/white_70"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_weight="1"
+                            android:importantForAccessibility="noHideDescendants"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_score_title"
+                                android:textAppearance="@style/TextAppearance.OVigia.Label" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:background="@drawable/bg_legend_dot_gold" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:text="@string/profile_score_engine"
+                                    android:textColor="@color/white_70"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/tvEngineWins"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    tools:text="2" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:background="@drawable/bg_legend_dot_blue" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:text="@string/profile_score_player"
+                                    android:textColor="@color/white_70"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/tvPlayerWins"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    tools:text="1" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Números -->
+                    <LinearLayout
+                        android:id="@+id/statsRow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/gap"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/statGames"
+                            layout="@layout/item_profile_stat" />
+
+                        <Space
+                            android:layout_width="@dimen/gap"
+                            android:layout_height="0dp" />
+
+                        <include
+                            android:id="@+id/statCharacters"
+                            layout="@layout/item_profile_stat" />
+
+                        <Space
+                            android:layout_width="@dimen/gap"
+                            android:layout_height="0dp" />
+
+                        <include
+                            android:id="@+id/statCollection"
+                            layout="@layout/item_profile_stat" />
+                    </LinearLayout>
+
+                    <!-- Conquistas: as mesmas que os amigos veem. -->
+                    <LinearLayout
+                        android:id="@+id/achievementsCard"
+                        style="@style/Widget.OVigia.DashboardCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/gap"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_trophy"
+                                app:tint="@color/vigia_gold" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="1"
+                                android:accessibilityHeading="true"
+                                android:text="@string/achievements_title"
+                                android:textAppearance="@style/TextAppearance.OVigia.Label" />
+
+                            <TextView
+                                android:id="@+id/tvAchievementsCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_count_pill"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="2dp"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="4 / 13" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/achievementsList"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:orientation="vertical" />
+
+                        <Button
+                            android:id="@+id/btnAllAchievements"
+                            style="@style/Widget.OVigia.TextAction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            app:icon="@drawable/ic_chevron_right"
+                            app:iconGravity="end"
+                            app:iconTint="@color/vigia_gold"
+                            tools:text="Ver todas (13)"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <!-- Catálogo: prévia dos heróis desbloqueados e atalho para o catálogo. -->
+                    <LinearLayout
+                        android:id="@+id/catalogCard"
+                        style="@style/Widget.OVigia.DashboardCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/gap"
+                        android:background="@drawable/bg_card_catalog_progress"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_catalog"
+                                app:tint="@color/vigia_gold" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="1"
+                                android:accessibilityHeading="true"
+                                android:text="@string/profile_catalog_title"
+                                android:textAppearance="@style/TextAppearance.OVigia.Label" />
+
+                            <TextView
+                                android:id="@+id/tvCatalogCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_count_pill"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="2dp"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="3" />
+                        </LinearLayout>
+
+                        <!-- Retratos dos heróis mais recentes, montados em código. -->
+                        <LinearLayout
+                            android:id="@+id/catalogPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:orientation="horizontal" />
+
+                        <TextView
+                            android:id="@+id/tvCatalogEmpty"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/profile_catalog_empty"
+                            android:textColor="@color/white_70"
+                            android:textSize="14sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <Button
+                            android:id="@+id/btnOpenCatalog"
+                            style="@style/Widget.OVigia.TextAction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/profile_open_catalog"
+                            app:icon="@drawable/ic_chevron_right"
+                            app:iconGravity="end"
+                            app:iconTint="@color/vigia_gold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvFavoritesTitle"
+                        style="@style/Widget.OVigia.SectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_favorites_title" />
+
+                    <LinearLayout
+                        android:id="@+id/favoritesList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <TextView
+                        android:id="@+id/tvRecentTitle"
+                        style="@style/Widget.OVigia.SectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_recent_title" />
+
+                    <LinearLayout
+                        android:id="@+id/recentList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <Button
+                        android:id="@+id/btnSignOut"
+                        style="@style/Widget.OVigia.Button.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/profile_sign_out" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Fundo da barra de status: aparece conforme o banner sai de cena. -->
+    <View
+        android:id="@+id/statusScrim"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0"
+        android:background="@color/vigia_space"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorColor="@color/vigia_gold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

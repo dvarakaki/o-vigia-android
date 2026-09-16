@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tela que fica para trás: só esmaece, rápido. -->
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/motion_screen_exit"
+    android:fromAlpha="1"
+    android:interpolator="@android:interpolator/accelerate_quad"
+    android:toAlpha="0" />

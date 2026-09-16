@@ -1,110 +1,129 @@
 package com.ovigia.app.learning;
 
-import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
+import com.ovigia.app.util.AtomicFiles;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
 /**
- * Estado persistente de aprendizado entre partidas. Três coisas ao mesmo tempo,
- * no mesmo arquivo em disco pra manter I/O simples:
+ * Estado persistente de aprendizado entre partidas, num único arquivo JSON.
  *
- * 1. Contagem de acertos por personagem — usada como boost no prior inicial do
- *    {@code GameEngine}. Efeito imediato: personagens que ESTE jogador escolhe
- *    com frequência sobem no ranking desde a primeira pergunta.
- * 2. Correção de crenças por atributo — cada vez que o jogador revela o
- *    personagem correto E respondeu a uma pergunta, a resposta é agregada
- *    (média com força de prior) e passa a substituir/misturar com a crença
- *    original da Comic Vine. Corrige atributos mal marcados sem apagar o
- *    dado original quando ainda há pouco sinal.
- * 3. Histórico bruto de partidas — pra retreinamento offline futuro; não
- *    afeta comportamento agora, só acumula.
+ * Cada conta tem seu próprio bloco (estatísticas, favoritos, crenças aprendidas):
+ * o motor aprende com o dono da sessão e nada vaza para outra conta no mesmo
+ * aparelho. Sem sessão aberta, leituras devolvem valores neutros e gravações
+ * são ignoradas — jogar deslogado não conta pra ninguém.
  *
- * Não é thread-safe por design: só a UI thread mexe aqui (via ViewModel).
+ * O bloco de cada conta guarda:
+ *
+ * 1. Contagem de acertos por personagem — boost no prior inicial do
+ *    {@code GameEngine}: personagens que ESTE jogador escolhe com frequência
+ *    sobem no ranking desde a primeira pergunta.
+ * 2. Correção de crenças por atributo — sempre que a partida termina com o
+ *    personagem certo conhecido, as respostas dadas são agregadas e misturadas
+ *    com a crença curada (inclusive para atributos que a curadoria não listou).
+ * 3. Estatísticas e histórico bruto de partidas — para a tela de estatísticas
+ *    e para recalibrar o modelo de ruído das respostas offline.
+ *    O histórico também alimenta a tela de perfil ({@link #history}).
+ *
+ * Thread-safety: todos os acessos ao estado são sincronizados. A leitura do
+ * disco ({@link #ensureLoaded()}) deve rodar fora da main thread; a gravação é
+ * sempre despachada para o {@code ioExecutor} e é atômica (arquivo temporário +
+ * rename), então um app morto no meio da escrita não corrompe o aprendizado.
  */
 public final class LearningStore {
 
     private static final String TAG = "LearningStore";
-    private static final String FILE_NAME = "learning_store.json";
 
     /**
-     * Peso de cada acerto do jogador sobre o prior de popularidade. Com 0.5,
-     * cada vez que o jogador confirmou o personagem X, o prior de X é
-     * multiplicado por 1.5 — dois acertos dobram, três triplicam. Sobe rápido
-     * o bastante pra sentir efeito depois de 1-2 partidas, mas não engole o
-     * sinal de popularidade real da Comic Vine.
+     * Peso do boost por acertos: {@code 1 + w·ln(1 + acertos)}. Logarítmico para
+     * sentir o efeito já na 1ª–2ª partida (1 acerto ≈ 1.35×, 3 ≈ 1.7×) sem deixar
+     * um personagem muito jogado engolir o prior (20 acertos ≈ 2.5×).
      */
     private static final double PICK_BOOST_WEIGHT = 0.5;
 
     /**
-     * "Força" do prior original ao misturar com a crença aprendida. Fórmula:
-     * {@code final = original * K/(K+n) + learnedMean * n/(K+n)}, onde n é o
-     * número de respostas observadas pra esse par (personagem, atributo).
-     * K=5 significa: com 1 resposta observada, o valor final ainda é 83%
-     * baseado no original; com 5, meio a meio; a partir de ~15 respostas o
-     * aprendido domina. Alto de propósito — um jogador pode discordar de
-     * um atributo por engano, e não queremos apagar a Comic Vine numa
-     * partida só.
+     * "Força" da crença curada ao misturar com a aprendida:
+     * {@code final = original·K/(K+n) + média·n/(K+n)}. K=5: com 1 resposta o
+     * original ainda pesa 83%; com 5, meio a meio.
      */
     private static final double BELIEF_PRIOR_STRENGTH = 5.0;
 
-    /**
-     * Máximo de partidas guardadas no log. Circular: quando estoura, descarta
-     * as mais antigas. Existe pra o arquivo não crescer sem limite — o efeito
-     * de aprendizado real vive nos agregados acima, não no log bruto.
-     */
+    /** Máximo de partidas guardadas no histórico bruto (as mais antigas saem primeiro). */
     private static final int MAX_GAME_LOG_ENTRIES = 500;
 
-    private final File file;
+    private static final Stats EMPTY_STATS = new Stats(0, 0, 0);
+    private static final PlayerHistory EMPTY_HISTORY = new PlayerHistory(
+            EMPTY_STATS, Collections.emptyList(), Collections.emptyList());
+
+    /** Como a partida terminou — alimenta as estatísticas. */
+    public enum Outcome {
+        /** O motor chutou certo. */
+        ENGINE_GUESSED,
+        /** O jogador escolheu o personagem certo entre as alternativas oferecidas. */
+        PICKED_FROM_ALTERNATIVES,
+        /** O motor perdeu e o jogador revelou em quem pensou. */
+        REVEALED_AFTER_LOSS,
+        /** O motor perdeu e o jogador não revelou o personagem. */
+        LOST_UNREVEALED
+    }
+
+    private final Supplier<File> fileSupplier;
+    private final Object fileLock = new Object();
+    private final Executor ioExecutor;
     private final Gson gson = new Gson();
     private State state;
 
-    public LearningStore(Context context) {
-        this.file = new File(context.getApplicationContext().getFilesDir(), FILE_NAME);
-        this.state = load();
+    /**
+     * @param fileSupplier resolvido só no executor de I/O — obter o diretório de
+     *                     arquivos do app já é acesso a disco.
+     */
+    public LearningStore(Supplier<File> fileSupplier, Executor ioExecutor) {
+        this.fileSupplier = fileSupplier;
+        this.ioExecutor = ioExecutor;
     }
 
-    /** Boost multiplicativo pro prior de popularidade. 1.0 = neutro. */
-    public double popularityBoost(int characterId) {
-        Integer picks = state.picksById.get(characterId);
+    /** Carrega do disco na primeira chamada. Bloqueante: chamar fora da main thread. */
+    public synchronized void ensureLoaded() {
+        if (state == null) state = load();
+    }
+
+    /** Boost multiplicativo pro prior de popularidade. 1.0 = neutro (sem conta ou sem acertos). */
+    public synchronized double popularityBoost(@Nullable String accountId, int characterId) {
+        ensureLoaded();
+        PerAccountState perAccount = perAccount(accountId, false);
+        if (perAccount == null) return 1.0;
+        Integer picks = perAccount.picksById.get(characterId);
         if (picks == null || picks <= 0) return 1.0;
-        return 1.0 + PICK_BOOST_WEIGHT * picks;
+        return 1.0 + PICK_BOOST_WEIGHT * Math.log1p(picks);
     }
 
     /**
-     * Crença aprendida em {@code [0,1]} pro par (personagem, atributo), ou
-     * {@code null} se nunca foi observado. Quem chama decide como misturar
-     * com a crença original — veja {@link #blend}.
+     * Crença final pro par (personagem, atributo), misturando {@code originalBelief}
+     * com o que foi aprendido, ou {@code null} se o par nunca foi observado (ou
+     * sem sessão aberta).
      */
-    public Double learnedBelief(int characterId, String key) {
-        Map<String, double[]> perAttr = state.beliefsById.get(characterId);
+    public synchronized Double blendedBelief(@Nullable String accountId, int characterId, String key,
+                                             double originalBelief) {
+        ensureLoaded();
+        PerAccountState perAccount = perAccount(accountId, false);
+        if (perAccount == null) return null;
+        Map<String, double[]> perAttr = perAccount.beliefsById.get(characterId);
         if (perAttr == null) return null;
         double[] sumCount = perAttr.get(key);
         if (sumCount == null || sumCount[1] <= 0) return null;
-        return sumCount[0] / sumCount[1];
-    }
-
-    /**
-     * Mistura a crença original da Comic Vine com o que foi aprendido, usando
-     * a força de prior {@link #BELIEF_PRIOR_STRENGTH}. Se nunca foi observado,
-     * devolve o original sem tocar.
-     */
-    public double blend(int characterId, String key, double originalBelief) {
-        Map<String, double[]> perAttr = state.beliefsById.get(characterId);
-        if (perAttr == null) return originalBelief;
-        double[] sumCount = perAttr.get(key);
-        if (sumCount == null || sumCount[1] <= 0) return originalBelief;
         double n = sumCount[1];
         double learnedMean = sumCount[0] / n;
         double w = n / (BELIEF_PRIOR_STRENGTH + n);
@@ -112,71 +131,170 @@ public final class LearningStore {
     }
 
     /**
-     * Registra que uma partida terminou com {@code correctId} como resposta
-     * certa e {@code answers} como as respostas dadas (apenas as que tiveram
-     * evidência — "Não sei" deve ficar de fora). Atualiza os três estados
-     * (contagem, crenças, log) e persiste em disco.
+     * Registra o fim de uma partida em que o personagem certo é conhecido.
+     * {@code answers} deve conter só respostas com evidência ("Não sei" fica de fora).
+     * Sem sessão aberta ({@code accountId == null}) a partida não é gravada.
      */
-    public void recordGame(int correctId, List<AnswerRecord> answers) {
-        Integer prev = state.picksById.get(correctId);
-        state.picksById.put(correctId, (prev == null ? 0 : prev) + 1);
-
-        Map<String, double[]> perAttr = state.beliefsById.get(correctId);
-        if (perAttr == null) {
-            perAttr = new LinkedHashMap<>();
-            state.beliefsById.put(correctId, perAttr);
+    public void recordGame(@Nullable String accountId, int correctId, List<AnswerRecord> givenAnswers,
+                           Outcome outcome) {
+        if (accountId == null) return;
+        // "Não sei" (NaN) não é evidência — e o Gson nem consegue serializar NaN.
+        List<AnswerRecord> answers = new ArrayList<>();
+        for (AnswerRecord a : givenAnswers) {
+            if (a != null && a.key != null && !Double.isNaN(a.value)) answers.add(a);
         }
-        for (AnswerRecord a : answers) {
-            if (a == null || a.key == null || Double.isNaN(a.value)) continue;
-            double[] sumCount = perAttr.get(a.key);
-            if (sumCount == null) {
-                sumCount = new double[]{0.0, 0.0};
-                perAttr.put(a.key, sumCount);
+        synchronized (this) {
+            ensureLoaded();
+            PerAccountState perAccount = perAccount(accountId, true);
+            Integer prev = perAccount.picksById.get(correctId);
+            perAccount.picksById.put(correctId, (prev == null ? 0 : prev) + 1);
+
+            Map<String, double[]> perAttr = perAccount.beliefsById.get(correctId);
+            if (perAttr == null) {
+                perAttr = new LinkedHashMap<>();
+                perAccount.beliefsById.put(correctId, perAttr);
             }
-            sumCount[0] += a.value;
-            sumCount[1] += 1;
-        }
+            for (AnswerRecord a : answers) {
+                double[] sumCount = perAttr.get(a.key);
+                if (sumCount == null) {
+                    sumCount = new double[]{0.0, 0.0};
+                    perAttr.put(a.key, sumCount);
+                }
+                sumCount[0] += a.value;
+                sumCount[1] += 1;
+            }
 
-        state.gameLog.add(new GameLogEntry(System.currentTimeMillis(), correctId, answers));
-        while (state.gameLog.size() > MAX_GAME_LOG_ENTRIES) {
-            state.gameLog.remove(0);
+            perAccount.gameLog.add(new GameLogEntry(System.currentTimeMillis(), correctId, answers, outcome));
+            while (perAccount.gameLog.size() > MAX_GAME_LOG_ENTRIES) {
+                perAccount.gameLog.remove(0);
+            }
+            countOutcome(perAccount, outcome);
         }
+        persistAsync();
+    }
 
-        persist();
+    /** Registra uma partida perdida sem personagem revelado — só entra nas estatísticas. */
+    public void recordLoss(@Nullable String accountId) {
+        if (accountId == null) return;
+        synchronized (this) {
+            ensureLoaded();
+            countOutcome(perAccount(accountId, true), Outcome.LOST_UNREVEALED);
+        }
+        persistAsync();
+    }
+
+    private static void countOutcome(PerAccountState perAccount, Outcome outcome) {
+        perAccount.gamesPlayed++;
+        if (outcome == Outcome.ENGINE_GUESSED) perAccount.engineWins++;
+    }
+
+    /**
+     * Fotografia das estatísticas da conta. Bloqueante na primeira chamada
+     * (carrega do disco). Sem conta, devolve tudo em zero.
+     */
+    public synchronized Stats stats(@Nullable String accountId) {
+        ensureLoaded();
+        PerAccountState perAccount = perAccount(accountId, false);
+        if (perAccount == null) return EMPTY_STATS;
+        return new Stats(perAccount.gamesPlayed, perAccount.engineWins, perAccount.picksById.size());
+    }
+
+    /**
+     * Fotografia do histórico da conta para a tela de perfil: estatísticas,
+     * os {@code maxFavorites} personagens mais pensados e as {@code maxRecent}
+     * partidas mais recentes com personagem conhecido (da mais nova para a mais
+     * antiga). Bloqueante na primeira chamada (carrega do disco). Sem conta,
+     * devolve tudo vazio.
+     */
+    public synchronized PlayerHistory history(@Nullable String accountId, int maxFavorites, int maxRecent) {
+        ensureLoaded();
+        PerAccountState perAccount = perAccount(accountId, false);
+        if (perAccount == null) return EMPTY_HISTORY;
+
+        List<CharacterCount> favorites = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> e : perAccount.picksById.entrySet()) {
+            if (e.getValue() != null && e.getValue() > 0) {
+                favorites.add(new CharacterCount(e.getKey(), e.getValue()));
+            }
+        }
+        // Empate: id menor primeiro, para a ordem não mudar entre aberturas da tela.
+        favorites.sort((a, b) -> a.count != b.count
+                ? Integer.compare(b.count, a.count)
+                : Integer.compare(a.characterId, b.characterId));
+        if (favorites.size() > maxFavorites) favorites = new ArrayList<>(favorites.subList(0, maxFavorites));
+
+        List<GameRecord> recent = new ArrayList<>();
+        for (int i = perAccount.gameLog.size() - 1; i >= 0 && recent.size() < maxRecent; i--) {
+            GameLogEntry entry = perAccount.gameLog.get(i);
+            if (entry == null || entry.outcome == null) continue;
+            recent.add(new GameRecord(entry.timestamp, entry.correctId, entry.outcome));
+        }
+        return new PlayerHistory(stats(accountId), favorites, recent);
+    }
+
+    /** Apaga tudo que foi aprendido pela conta. Sem conta, não faz nada. */
+    public void reset(@Nullable String accountId) {
+        if (accountId == null) return;
+        synchronized (this) {
+            ensureLoaded();
+            state.byAccount.remove(accountId);
+        }
+        persistAsync();
+    }
+
+    /** Apaga o bloco da conta (usado ao excluir a conta). */
+    public void deleteAccount(String accountId) {
+        reset(accountId);
+    }
+
+    @Nullable
+    private PerAccountState perAccount(@Nullable String accountId, boolean create) {
+        if (accountId == null) return null;
+        PerAccountState perAccount = state.byAccount.get(accountId);
+        if (perAccount == null) {
+            if (!create) return null;
+            perAccount = new PerAccountState();
+            state.byAccount.put(accountId, perAccount);
+        } else {
+            perAccount.normalize();
+        }
+        return perAccount;
     }
 
     private State load() {
+        File file = fileSupplier.get();
         if (!file.exists()) return new State();
-        try (FileReader reader = new FileReader(file)) {
-            State loaded = gson.fromJson(reader, State.class);
-            if (loaded == null) return new State();
-            if (loaded.picksById == null) loaded.picksById = new HashMap<>();
-            if (loaded.beliefsById == null) loaded.beliefsById = new HashMap<>();
-            if (loaded.gameLog == null) loaded.gameLog = new ArrayList<>();
+        try {
+            State loaded = gson.fromJson(AtomicFiles.readUtf8(file), State.class);
+            if (loaded == null || loaded.byAccount == null) return new State();
+            loaded.byAccount.values().removeIf(v -> v == null);
+            for (PerAccountState perAccount : loaded.byAccount.values()) {
+                perAccount.normalize();
+            }
             return loaded;
         } catch (IOException | RuntimeException e) {
-            Log.w(TAG, "Falha ao ler estado de aprendizado; comecando do zero", e);
+            Log.w(TAG, "Falha ao ler estado de aprendizado; começando do zero", e);
             return new State();
         }
     }
 
-    private void persist() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            gson.toJson(state, State.class, writer);
-        } catch (IOException e) {
-            Log.w(TAG, "Falha ao salvar estado de aprendizado", e);
-        }
+    private void persistAsync() {
+        ioExecutor.execute(() -> {
+            String json;
+            synchronized (this) {
+                json = gson.toJson(state, State.class);
+            }
+            synchronized (fileLock) {
+                try {
+                    AtomicFiles.writeUtf8(fileSupplier.get(), json);
+                } catch (IOException e) {
+                    Log.w(TAG, "Falha ao salvar estado de aprendizado", e);
+                }
+            }
+        });
     }
 
-    /** Reseta tudo — util pra debug e pra um botao "esquecer" no futuro. */
-    public void reset() {
-        state = new State();
-        if (file.exists() && !file.delete()) {
-            Log.w(TAG, "Falha ao apagar arquivo de aprendizado");
-        }
-    }
-
-    /** Uma resposta dada numa partida — usada pra alimentar {@link #recordGame}. */
+    /** Uma resposta dada numa partida. */
     public static final class AnswerRecord {
         public final String key;
         public final double value;
@@ -187,31 +305,94 @@ public final class LearningStore {
         }
     }
 
-    /**
-     * Snapshot completo de uma partida terminada. Guardado só pra log/análise
-     * offline; não é lido de volta pela lógica em runtime.
-     */
+    public static final class Stats {
+        public final int gamesPlayed;
+        public final int engineWins;
+        public final int distinctCharacters;
+
+        Stats(int gamesPlayed, int engineWins, int distinctCharacters) {
+            this.gamesPlayed = gamesPlayed;
+            this.engineWins = engineWins;
+            this.distinctCharacters = distinctCharacters;
+        }
+
+        /** Taxa de acerto do motor em [0,1], ou 0 sem partidas. */
+        public double engineWinRate() {
+            return gamesPlayed == 0 ? 0 : (double) engineWins / gamesPlayed;
+        }
+    }
+
+    /** Quantas vezes o jogador pensou num personagem. */
+    public static final class CharacterCount {
+        public final int characterId;
+        public final int count;
+
+        CharacterCount(int characterId, int count) {
+            this.characterId = characterId;
+            this.count = count;
+        }
+    }
+
+    /** Uma partida terminada, vista pela tela de perfil. */
+    public static final class GameRecord {
+        public final long timestamp;
+        public final int characterId;
+        public final Outcome outcome;
+
+        GameRecord(long timestamp, int characterId, Outcome outcome) {
+            this.timestamp = timestamp;
+            this.characterId = characterId;
+            this.outcome = outcome;
+        }
+    }
+
+    /** Resultado de {@link #history}. Listas imutáveis. */
+    public static final class PlayerHistory {
+        public final Stats stats;
+        public final List<CharacterCount> favorites;
+        public final List<GameRecord> recentGames;
+
+        PlayerHistory(Stats stats, List<CharacterCount> favorites, List<GameRecord> recentGames) {
+            this.stats = stats;
+            this.favorites = Collections.unmodifiableList(favorites);
+            this.recentGames = Collections.unmodifiableList(recentGames);
+        }
+    }
+
+    /** Snapshot de uma partida terminada — só para análise offline. */
     private static final class GameLogEntry {
         final long timestamp;
         final int correctId;
         final List<AnswerRecord> answers;
+        final Outcome outcome;
 
-        GameLogEntry(long timestamp, int correctId, List<AnswerRecord> answers) {
+        GameLogEntry(long timestamp, int correctId, List<AnswerRecord> answers, Outcome outcome) {
             this.timestamp = timestamp;
             this.correctId = correctId;
             this.answers = answers;
+            this.outcome = outcome;
         }
     }
 
-    /** Formato serializado. Public fields pro Gson conseguir ler/escrever direto. */
-    private static final class State {
+    /** Bloco por conta no arquivo serializado. */
+    private static final class PerAccountState {
         Map<Integer, Integer> picksById = new HashMap<>();
-        /**
-         * id -> (attributeKey -> [sum, count]). Cada resposta soma seu valor
-         * ao sum e incrementa count; a media {@code sum/count} eh a crenca
-         * aprendida.
-         */
+        /** id -> (chave do atributo -> [soma das respostas, quantidade]). */
         Map<Integer, Map<String, double[]>> beliefsById = new HashMap<>();
         List<GameLogEntry> gameLog = new ArrayList<>();
+        int gamesPlayed;
+        int engineWins;
+
+        /** Blindagem contra JSON antigo com campos nulos. */
+        void normalize() {
+            if (picksById == null) picksById = new HashMap<>();
+            if (beliefsById == null) beliefsById = new HashMap<>();
+            if (gameLog == null) gameLog = new ArrayList<>();
+        }
+    }
+
+    /** Formato serializado: id da conta -> bloco. */
+    private static final class State {
+        Map<String, PerAccountState> byAccount = new HashMap<>();
     }
 }

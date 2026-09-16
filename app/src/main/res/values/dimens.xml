@@ -1,3 +1,46 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="screen_margin">24dp</dimen>
+    <dimen name="bar_margin">8dp</dimen>
+    <dimen name="gap">12dp</dimen>
+    <dimen name="button_height">52dp</dimen>
+    <!-- Largura máxima de painéis e listas: evita linhas gigantes em tablets. -->
+    <dimen name="content_max_width">480dp</dimen>
+    <!-- Quanto do fim da arte do Vigia fica atrás do balão. -->
+    <dimen name="art_overlap">72dp</dimen>
+    <dimen name="avatar_large">110dp</dimen>
+    <!-- Espaço do retrato no resultado, com folga para o brilho do desbloqueio. -->
+    <dimen name="result_portrait_frame">150dp</dimen>
+    <dimen name="avatar_list">72dp</dimen>
+    <dimen name="avatar_row">56dp</dimen>
+    <dimen name="avatar_profile">104dp</dimen>
+    <!-- Quanto da foto do perfil sobe sobre o banner (metade da foto). -->
+    <dimen name="avatar_profile_overlap">-52dp</dimen>
+    <dimen name="profile_banner_height">212dp</dimen>
+    <!-- Respiro do ícone padrão dentro da moldura quando não há foto. -->
+    <dimen name="avatar_icon_padding">22dp</dimen>
+    <dimen name="score_ring_size">104dp</dimen>
+    <!-- Prévia do catálogo no perfil: retratos redondos sobrepostos. -->
+    <dimen name="catalog_preview_avatar">48dp</dimen>
+    <dimen name="catalog_preview_overlap">10dp</dimen>
+    <dimen name="catalog_preview_ring">2dp</dimen>
+    <!-- Amigos -->
+    <dimen name="avatar_friend">48dp</dimen>
+    <!-- Respiro do ícone padrão sem foto: nas linhas e no cartão da própria conta. -->
+    <dimen name="avatar_row_icon_padding">10dp</dimen>
+    <dimen name="avatar_me_icon_padding">12dp</dimen>
+    <!-- Largura mínima das cartas de herói no perfil de um amigo. -->
+    <dimen name="friend_hero_min_width">100dp</dimen>
+    <dimen name="friend_hero_card_margin">6dp</dimen>
+
+    <!-- Ficha do herói -->
+    <dimen name="hero_backdrop_height">380dp</dimen>
+    <!-- Distância do topo (fora a barra de status) até o pôster. -->
+    <dimen name="hero_poster_top">72dp</dimen>
+    <dimen name="hero_poster_width">176dp</dimen>
+    <dimen name="hero_poster_height">234dp</dimen>
+    <dimen name="hero_content_max_width">600dp</dimen>
+    <!-- Biografia recolhida: altura antes de "Ler biografia completa". -->
+    <dimen name="hero_bio_collapsed_height">360dp</dimen>
+    <dimen name="hero_bio_fade_height">96dp</dimen>
+    <dimen name="hero_chip_spacing">8dp</dimen>
 </resources>

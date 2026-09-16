@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Configurações: idioma, partida (vibração, tela ligada), dados (cache, aprendizado) e sobre. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingBottom="32dp"
+    tools:background="@drawable/bg_galaxy">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                style="@style/Widget.OVigia.IconButton"
+                android:layout_margin="@dimen/bar_margin"
+                android:contentDescription="@string/cd_back"
+                android:src="@drawable/ic_arrow_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="64dp"
+                android:layout_gravity="center_horizontal"
+                android:accessibilityHeading="true"
+                android:gravity="center"
+                android:text="@string/settings_title"
+                android:textAppearance="@style/TextAppearance.OVigia.Title" />
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_margin"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="@dimen/content_max_width">
+
+                <!-- Idioma -->
+                <TextView
+                    android:id="@+id/tvSectionLanguage"
+                    style="@style/Widget.OVigia.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/settings_section_language" />
+
+                <LinearLayout
+                    android:id="@+id/cardLanguage"
+                    style="@style/Widget.OVigia.SettingsCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/rowLanguage"
+                        style="@style/Widget.OVigia.SettingsRow"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            style="@style/Widget.OVigia.SettingsIcon"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_language" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_language"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingTitle" />
+
+                            <TextView
+                                android:id="@+id/tvLanguageValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingSummary"
+                                tools:text="Português (Brasil)" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="8dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/white_50" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Partida -->
+                <TextView
+                    android:id="@+id/tvSectionGame"
+                    style="@style/Widget.OVigia.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_game" />
+
+                <LinearLayout
+                    android:id="@+id/cardGame"
+                    style="@style/Widget.OVigia.SettingsCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/rowHaptics"
+                        style="@style/Widget.OVigia.SettingsRow"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            style="@style/Widget.OVigia.SettingsIcon"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_vibration" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_haptics"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingTitle" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_haptics_summary"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingSummary" />
+                        </LinearLayout>
+
+                        <!-- A linha inteira alterna o interruptor (e fala o estado dele no TalkBack). -->
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchHaptics"
+                            style="@style/Widget.OVigia.Switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:clickable="false"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:importantForAccessibility="no" />
+                    </LinearLayout>
+
+                    <View style="@style/Widget.OVigia.SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/rowKeepScreenOn"
+                        style="@style/Widget.OVigia.SettingsRow"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            style="@style/Widget.OVigia.SettingsIcon"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_brightness" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_keep_screen_on"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingTitle" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_keep_screen_on_summary"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingSummary" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchKeepScreenOn"
+                            style="@style/Widget.OVigia.Switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:clickable="false"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:importantForAccessibility="no" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Dados -->
+                <TextView
+                    android:id="@+id/tvSectionData"
+                    style="@style/Widget.OVigia.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_data" />
+
+                <LinearLayout
+                    android:id="@+id/cardData"
+                    style="@style/Widget.OVigia.SettingsCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/rowClearCache"
+                        style="@style/Widget.OVigia.SettingsRow"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            style="@style/Widget.OVigia.SettingsIcon"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_delete_sweep" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_clear_cache"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingTitle" />
+
+                            <TextView
+                                android:id="@+id/tvCacheSummary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_cache_calculating"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingSummary" />
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/cacheProgress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:importantForAccessibility="no"
+                            android:indeterminate="true"
+                            android:visibility="gone"
+                            app:indicatorColor="@color/vigia_gold"
+                            app:indicatorSize="22dp"
+                            app:trackThickness="3dp" />
+                    </LinearLayout>
+
+                    <View style="@style/Widget.OVigia.SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/rowForget"
+                        style="@style/Widget.OVigia.SettingsRow"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            style="@style/Widget.OVigia.SettingsIcon"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_restart"
+                            app:tint="@color/vigia_danger" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_forget_learning"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingTitle"
+                                android:textColor="@color/vigia_danger" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_forget_summary"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingSummary" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Sobre -->
+                <TextView
+                    android:id="@+id/tvSectionAbout"
+                    style="@style/Widget.OVigia.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_about" />
+
+                <LinearLayout
+                    android:id="@+id/cardAbout"
+                    style="@style/Widget.OVigia.SettingsCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/rowVersion"
+                        style="@style/Widget.OVigia.SettingsRow"
+                        android:background="@null"
+                        android:focusable="true">
+
+                        <ImageView
+                            style="@style/Widget.OVigia.SettingsIcon"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_info" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:importantForAccessibility="no"
+                            android:text="@string/settings_version"
+                            android:textAppearance="@style/TextAppearance.OVigia.SettingTitle" />
+
+                        <TextView
+                            android:id="@+id/tvVersionValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:importantForAccessibility="no"
+                            android:textAppearance="@style/TextAppearance.OVigia.SettingSummary"
+                            tools:text="1.1.0" />
+                    </LinearLayout>
+
+                    <View style="@style/Widget.OVigia.SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/rowDataSource"
+                        style="@style/Widget.OVigia.SettingsRow"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            style="@style/Widget.OVigia.SettingsIcon"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_catalog" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_data_source"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingTitle" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_data_source_value"
+                                android:textAppearance="@style/TextAppearance.OVigia.SettingSummary" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="8dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_open_in_new"
+                            app:tint="@color/white_50" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDisclaimer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/settings_disclaimer"
+                    android:textColor="@color/white_50"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tinta do banner padrão sobre a galáxia: véu azul-violeta na diagonal, brilho
+  dourado no canto (o "olhar" do Vigia) e um halo azul por trás da foto.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="330"
+                android:centerColor="#662A1F8F"
+                android:endColor="#99070B1F"
+                android:startColor="#991957D8"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.85"
+                android:centerY="0.25"
+                android:endColor="#00E8C468"
+                android:gradientRadius="180dp"
+                android:startColor="#66E8C468"
+                android:type="radial" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.5"
+                android:centerY="1.0"
+                android:endColor="#005B8CFF"
+                android:gradientRadius="160dp"
+                android:startColor="#555B8CFF"
+                android:type="radial" />
+        </shape>
+    </item>
+</layer-list>
