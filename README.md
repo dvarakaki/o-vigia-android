@@ -52,15 +52,18 @@ FIREBASE_EMULATOR_HOST=10.0.2.2
 
 Como funciona:
 
-- **A conta online é opcional e usa o mesmo e-mail e senha da local.** Ela só é criada
-  quando o jogador conecta pela aba de amigos e escolhe um `@usuario` único. Quem já conectou
-  volta a ficar online sozinho ao entrar na conta.
+- **A conta online usa o mesmo e-mail e senha da local.** Entrar ou criar a conta já abre a
+  sessão online com a senha digitada, então a aba de amigos não pede a senha de novo — só
+  falta escolher um `@usuario` único. Sem servidor configurado ou sem internet no login, a
+  aba pede a senha quando o jogador abrir.
 - **Só amigos veem o perfil completo.** Nome, `@usuario` e foto aparecem na busca; bio,
   banner, números, heróis e conquistas só para amigos. O e-mail nunca é publicado.
 - **Amizade só com pedido aceito.** As regras do Firestore garantem que só quem recebeu o
   pedido cria a amizade, e qualquer um dos dois pode desfazê-la.
-- **Heróis acompanham a conta.** Ao conectar em outro aparelho, os heróis desbloqueados
-  online entram no catálogo local. As estatísticas de partidas continuam sendo do aparelho.
+- **A conta acompanha o jogador.** Entrar com um e-mail que já tem conta online num aparelho
+  onde ela não existe (app reinstalado, celular novo) recria a conta local com o que o
+  servidor guardava: nome, bio, `@usuario`, foto, banner, heróis e números das partidas. O
+  aprendizado do motor e o histórico partida a partida ficam no aparelho onde foram jogados.
 - **Excluir a conta apaga também a online.** Sem internet, a exclusão espera a conexão para
   não deixar dados para trás.
 

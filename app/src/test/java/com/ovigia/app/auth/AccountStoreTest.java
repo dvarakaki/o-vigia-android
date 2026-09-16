@@ -183,6 +183,56 @@ public class AccountStoreTest {
     }
 
     @Test
+    public void restore_recreatesTheOnlineAccountAndOpensTheSession() {
+        AccountStore store = newStore();
+        AccountStore.Result result = store.restore("Davi", " Davi@Exemplo.COM ", "segredo1", "vigia noturno",
+                "uid-1", "davi@exemplo.com", "davi");
+
+        assertTrue(result.isSuccess());
+        assertEquals("Davi", result.account.name);
+        assertEquals("davi@exemplo.com", result.account.email);
+        assertEquals("vigia noturno", result.account.bio);
+        assertEquals("uid-1", result.account.cloudUid);
+        assertEquals("davi", result.account.username);
+        assertEquals("a sessão já fica aberta", result.account.id, store.currentAccount().id);
+        assertTrue("entra com a mesma senha depois", newStore().signIn("davi@exemplo.com", "segredo1").isSuccess());
+    }
+
+    @Test
+    public void restore_adjustsWhatTheServerSentAndRecusesDuplicates() {
+        AccountStore store = newStore();
+        String longName = repeat('a', AccountStore.MAX_NAME_LENGTH + 10);
+        String longBio = repeat('b', AccountStore.MAX_BIO_LENGTH + 10);
+
+        AccountStore.Result result = store.restore(longName, "davi@exemplo.com", "segredo1", longBio,
+                "uid-1", null, null);
+
+        assertTrue(result.isSuccess());
+        assertEquals(AccountStore.MAX_NAME_LENGTH, result.account.name.length());
+        assertEquals(AccountStore.MAX_BIO_LENGTH, result.account.bio.length());
+        assertEquals("sem e-mail online, vale o mesmo do cadastro",
+                "davi@exemplo.com", result.account.cloudEmail);
+
+        assertEquals("e-mail já cadastrado neste aparelho", AccountStore.Error.EMAIL_IN_USE,
+                store.restore("Outro", "davi@exemplo.com", "segredo1", null, "uid-2", null, null).error);
+    }
+
+    @Test
+    public void restore_withoutNameFallsBackToTheEmail() {
+        AccountStore store = newStore();
+        AccountStore.Result result = store.restore("  ", "davi@exemplo.com", "segredo1", null, "uid-1", null, null);
+
+        assertTrue(result.isSuccess());
+        assertEquals("davi", result.account.name);
+    }
+
+    private static String repeat(char c, int times) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < times; i++) sb.append(c);
+        return sb.toString();
+    }
+
+    @Test
     public void corruptedFile_startsFresh() throws Exception {
         Files.write(file.toPath(), "{ não é json".getBytes(StandardCharsets.UTF_8));
         AccountStore store = newStore();

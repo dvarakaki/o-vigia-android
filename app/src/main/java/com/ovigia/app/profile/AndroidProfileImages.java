@@ -47,6 +47,30 @@ public final class AndroidProfileImages implements ProfileImages {
         int maxPx = kind == ImageKind.AVATAR ? AVATAR_MAX_PX : BANNER_MAX_PX;
         Bitmap bitmap = decodeScaled(ImageDecoder.createSource(resolver, source), maxPx);
 
+        ByteArrayOutputStream jpeg = new ByteArrayOutputStream();
+        try {
+            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, jpeg)) {
+                throw new IOException("Falha ao comprimir imagem");
+            }
+        } finally {
+            bitmap.recycle();
+        }
+        return write(jpeg.toByteArray(), kind, accountId);
+    }
+
+    @Override
+    public String saveShared(String base64, ImageKind kind, String accountId) throws IOException {
+        if (base64 == null) throw new IOException("Imagem vazia");
+        try {
+            // Já vem como JPEG reduzido do servidor: só gravar.
+            return write(Base64.getDecoder().decode(base64), kind, accountId);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Imagem ilegível", e);
+        }
+    }
+
+    /** Grava os bytes com um nome novo, por arquivo temporário + rename. */
+    private String write(byte[] jpeg, ImageKind kind, String accountId) throws IOException {
         File dir = directory.get();
         if (!dir.exists() && !dir.mkdirs()) throw new IOException("Não foi possível criar " + dir);
         String name = kind.name().toLowerCase(Locale.ROOT) + "_" + accountId + "_"
@@ -54,11 +78,7 @@ public final class AndroidProfileImages implements ProfileImages {
         File target = new File(dir, name);
         File tmp = new File(dir, name + ".tmp");
         try (OutputStream out = new FileOutputStream(tmp)) {
-            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out)) {
-                throw new IOException("Falha ao comprimir imagem");
-            }
-        } finally {
-            bitmap.recycle();
+            out.write(jpeg);
         }
         Files.move(tmp.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         return name;

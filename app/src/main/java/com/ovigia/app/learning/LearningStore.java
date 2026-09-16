@@ -196,7 +196,26 @@ public final class LearningStore {
         ensureLoaded();
         PerAccountState perAccount = perAccount(accountId, false);
         if (perAccount == null) return EMPTY_STATS;
-        return new Stats(perAccount.gamesPlayed, perAccount.engineWins, perAccount.picksById.size());
+        return new Stats(perAccount.gamesPlayed, perAccount.engineWins,
+                Math.max(perAccount.picksById.size(), perAccount.baseDistinctCharacters));
+    }
+
+    /**
+     * Recupera os números de uma conta trazida da nuvem (outro aparelho): só vale
+     * para um bloco ainda sem partidas, para nunca apagar o que foi jogado aqui.
+     * O aprendizado em si não vem junto — o servidor guarda só os totais.
+     */
+    public void importStats(String accountId, int gamesPlayed, int engineWins, int distinctCharacters) {
+        if (accountId == null) return;
+        synchronized (this) {
+            ensureLoaded();
+            PerAccountState perAccount = perAccount(accountId, true);
+            if (perAccount.gamesPlayed > 0 || !perAccount.picksById.isEmpty()) return;
+            perAccount.gamesPlayed = Math.max(0, gamesPlayed);
+            perAccount.engineWins = Math.max(0, Math.min(engineWins, perAccount.gamesPlayed));
+            perAccount.baseDistinctCharacters = Math.max(0, distinctCharacters);
+        }
+        persistAsync();
     }
 
     /**
@@ -382,6 +401,8 @@ public final class LearningStore {
         List<GameLogEntry> gameLog = new ArrayList<>();
         int gamesPlayed;
         int engineWins;
+        /** Personagens distintos trazidos da nuvem ao recuperar a conta (ver {@code importStats}). */
+        int baseDistinctCharacters;
 
         /** Blindagem contra JSON antigo com campos nulos. */
         void normalize() {

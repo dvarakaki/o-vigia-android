@@ -56,11 +56,9 @@ public class AuthFragment extends Fragment {
         SystemBarInsets.padTop(view);
 
         AppContainer container = ((OVigiaApplication) requireActivity().getApplication()).container();
-        // Quem já tinha conectado aos amigos volta a ficar online sem digitar a senha de novo.
         viewModel = new ViewModelProvider(this, new AuthViewModel.Factory(
-                container.accountStore, container.ioExecutor, container.mainExecutor,
-                (account, password) -> container.socialExecutor.execute(
-                        () -> container.socialRepository.resumeAfterSignIn(account, password))))
+                container.accountStore, container.ioExecutor, container.socialExecutor, container.mainExecutor,
+                new OnlineAuth(container.socialRepository)))
                 .get(AuthViewModel.class);
 
         binding.btnBack.setOnClickListener(v -> nav().popBackStack());

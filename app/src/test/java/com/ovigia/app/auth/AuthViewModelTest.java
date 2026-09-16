@@ -54,12 +54,87 @@ public class AuthViewModelTest {
         store.signUp("Ana", "ana@b.com", "segredo1");
         store.signOut();
 
-        AuthViewModel vm = new AuthViewModel(store, direct, direct);
+        // A conta está aqui: só a senha está errada, não adianta procurar no servidor.
+        RecordingOnline online = new RecordingOnline((email, password) -> {
+            throw new AssertionError("procurou no servidor uma conta que existe neste aparelho");
+        });
+        AuthViewModel vm = new AuthViewModel(store, direct, direct, direct, online);
         vm.submit("", "ana@b.com", "errada1");
 
         assertEquals(AccountStore.Error.WRONG_CREDENTIALS, vm.state().getValue().error);
         assertNull(vm.signedIn().getValue());
         assertNull(store.currentAccount());
+    }
+
+    @Test
+    public void unknownEmail_isRecoveredFromTheServerBeforeFailing() {
+        RecordingOnline online = new RecordingOnline(
+                (email, password) -> store.restore("Davi", email, password, "vigia", "uid-1", email, "davi").account);
+        AuthViewModel vm = new AuthViewModel(store, direct, direct, direct, online);
+
+        vm.submit("", "davi@exemplo.com", "segredo1");
+
+        Event<AccountStore.Account> event = vm.signedIn().getValue();
+        assertNotNull("entrar com um e-mail já cadastrado traz a conta de volta", event);
+        AccountStore.Account account = event.consume();
+        assertEquals("Davi", account.name);
+        assertEquals("vigia", account.bio);
+        assertNotNull(store.currentAccount());
+        assertNull(vm.state().getValue().error);
+    }
+
+    @Test
+    public void unknownEmail_withoutOnlineAccount_keepsTheCredentialsError() {
+        RecordingOnline online = new RecordingOnline((email, password) -> null);
+        AuthViewModel vm = new AuthViewModel(store, direct, direct, direct, online);
+
+        vm.submit("", "davi@exemplo.com", "segredo1");
+
+        assertEquals(AccountStore.Error.WRONG_CREDENTIALS, vm.state().getValue().error);
+        assertNull(vm.signedIn().getValue());
+        assertNull(store.currentAccount());
+    }
+
+    @Test
+    public void signIn_reopensTheOnlineSessionWithTheTypedPassword() {
+        store.signUp("Ana", "ana@b.com", "segredo1");
+        store.signOut();
+        RecordingOnline online = new RecordingOnline((email, password) -> {
+            throw new AssertionError("conta local existe: não recupera do servidor");
+        });
+        AuthViewModel vm = new AuthViewModel(store, direct, direct, direct, online);
+
+        vm.submit("", "ana@b.com", "segredo1");
+
+        assertEquals("Ana", online.resumedAccount.name);
+        assertEquals("segredo1", online.resumedPassword);
+    }
+
+    private interface Recovery {
+        AccountStore.Account recover(String email, String password);
+    }
+
+    /** {@link AuthViewModel.OnlineAccounts} que guarda o que recebeu. */
+    private static final class RecordingOnline implements AuthViewModel.OnlineAccounts {
+
+        private final Recovery recovery;
+        AccountStore.Account resumedAccount;
+        String resumedPassword;
+
+        RecordingOnline(Recovery recovery) {
+            this.recovery = recovery;
+        }
+
+        @Override
+        public void onSignedIn(AccountStore.Account account, String password) {
+            resumedAccount = account;
+            resumedPassword = password;
+        }
+
+        @Override
+        public AccountStore.Account recover(String email, String password) {
+            return recovery.recover(email, password);
+        }
     }
 
     @Test

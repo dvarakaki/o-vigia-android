@@ -21,6 +21,13 @@ public interface ProfileImages {
      */
     String importImage(Uri source, ImageKind kind, String accountId) throws IOException;
 
+    /**
+     * Grava no aparelho uma imagem que veio da conta online — JPEG em Base64, no
+     * mesmo formato que {@link #encodeForSharing} produz. Devolve o nome do
+     * arquivo criado. Usado ao recuperar uma conta em outro aparelho.
+     */
+    String saveShared(String base64, ImageKind kind, String accountId) throws IOException;
+
     /** Arquivo de um nome devolvido por {@link #importImage}, ou {@code null} para {@code null}. */
     File file(String fileName);
 

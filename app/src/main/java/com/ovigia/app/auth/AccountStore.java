@@ -125,6 +125,46 @@ public final class AccountStore {
         return Result.success(stored.toAccount());
     }
 
+    /**
+     * Recria neste aparelho a conta de quem já tinha cadastro no servidor e abre
+     * a sessão nela: mesmo e-mail e senha, com o perfil e a ligação online que
+     * vieram de volta. Quem chama repõe foto, banner, coleção e números.
+     *
+     * Nome e bio vêm do servidor, então são ajustados ao limite em vez de
+     * recusar a conta; o nome vazio cai para a parte do e-mail antes do @.
+     */
+    public synchronized Result restore(String name, String email, String password, String bio,
+                                       String cloudUid, String cloudEmail, String username) {
+        ensureLoaded();
+        String cleanEmail = normalizeEmail(email);
+        if (!EMAIL.matcher(cleanEmail).matches()) return Result.failure(Error.INVALID_EMAIL);
+        if (password == null || password.length() < MIN_PASSWORD_LENGTH) return Result.failure(Error.WEAK_PASSWORD);
+        if (findByEmail(cleanEmail) != null) return Result.failure(Error.EMAIL_IN_USE);
+
+        StoredAccount stored = new StoredAccount();
+        stored.id = UUID.randomUUID().toString();
+        stored.name = clip(name, MAX_NAME_LENGTH, cleanEmail.substring(0, cleanEmail.indexOf('@')));
+        stored.email = cleanEmail;
+        stored.bio = clip(bio, MAX_BIO_LENGTH, null);
+        setPassword(stored, password);
+        stored.createdAt = System.currentTimeMillis();
+        stored.cloudUid = cloudUid;
+        stored.cloudEmail = cloudEmail != null ? cloudEmail : cleanEmail;
+        stored.username = username;
+
+        state.accounts.add(stored);
+        state.currentAccountId = stored.id;
+        persist();
+        return Result.success(stored.toAccount());
+    }
+
+    /** Texto aparado no limite, ou {@code fallback} se ele ficar vazio. */
+    private static String clip(String text, int maxLength, String fallback) {
+        String clean = text == null ? "" : text.trim();
+        if (clean.isEmpty()) return fallback;
+        return clean.length() <= maxLength ? clean : clean.substring(0, maxLength).trim();
+    }
+
     public synchronized void signOut() {
         ensureLoaded();
         if (state.currentAccountId == null) return;
@@ -189,6 +229,15 @@ public final class AccountStore {
         }
         persist();
         return Result.success(stored.toAccount());
+    }
+
+    /**
+     * Se este aparelho já tem uma conta com esse e-mail. Não diz nada sobre a
+     * senha: serve para saber se vale a pena procurar a conta no servidor.
+     */
+    synchronized boolean knowsEmail(String email) {
+        ensureLoaded();
+        return findByEmail(normalizeEmail(email)) != null;
     }
 
     /** Se {@code password} é a senha da conta logada (sem alterar nada). */

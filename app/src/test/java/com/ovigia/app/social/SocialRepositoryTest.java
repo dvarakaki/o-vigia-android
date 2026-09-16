@@ -16,6 +16,7 @@ import java.util.concurrent.Executor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -156,11 +157,13 @@ public class SocialRepositoryTest {
     }
 
     @Test
-    public void resumeAfterSignIn_reconnectsLinkedAccounts_andNeverCreatesNewOnes() throws SocialException {
+    public void resumeAfterSignIn_opensTheOnlineSession_soFriendsNeverAskThePasswordAgain() throws SocialException {
+        // Conta que nunca conectou: o login já cria a conta online e só falta o @usuario.
         repository.resumeAfterSignIn(accounts.currentAccount(), "segredo1");
-        assertFalse("conta nunca conectada não vira conta online sozinha", backend.accountExists("davi@exemplo.com"));
+        assertTrue("o login cria a conta online", backend.accountExists("davi@exemplo.com"));
+        assertEquals(SocialRepository.Status.NEEDS_USERNAME, repository.session().status);
 
-        readyAs("davi");
+        repository.claimUsername("davi");
         backend.signOut();
         assertEquals(SocialRepository.Status.NEEDS_CONNECTION, repository.session().status);
 
@@ -169,15 +172,105 @@ public class SocialRepositoryTest {
     }
 
     @Test
-    public void switchingToAnUnlinkedAccount_closesTheOtherOnlineSession() throws SocialException {
+    public void resumeAfterSignIn_withoutNetwork_leavesTheFriendsTabAskingForThePassword() throws SocialException {
         readyAs("davi");
+        backend.signOut();
+        backend.offline = true;
+
+        repository.resumeAfterSignIn(accounts.currentAccount(), "segredo1");
+
+        assertEquals(SocialRepository.Status.NEEDS_CONNECTION, repository.session().status);
+    }
+
+    @Test
+    public void switchingAccounts_closesTheOtherOnlineSession() throws SocialException {
+        SocialRepository.Session davi = readyAs("davi");
         accounts.signOut();
         accounts.signUp("Ana", "ana@exemplo.com", "senha-ana");
 
         repository.resumeAfterSignIn(accounts.currentAccount(), "senha-ana");
 
-        assertNull(backend.signedInUid());
-        assertEquals(SocialRepository.Status.NEEDS_CONNECTION, repository.session().status);
+        assertNotEquals("a sessão online do Davi não fica aberta para a Ana",
+                davi.card.uid, backend.signedInUid());
+        assertEquals(SocialRepository.Status.NEEDS_USERNAME, repository.session().status);
+    }
+
+    @Test
+    public void recover_bringsBackTheWholeAccountOnANewDevice() throws SocialException {
+        String oldId = accounts.currentAccount().id;
+        accounts.updateProfile("Davi", "vigia noturno", "davi@exemplo.com", null);
+        accounts.setImage(AccountStore.ImageKind.AVATAR, "avatar.jpg");
+        accounts.setImage(AccountStore.ImageKind.BANNER, "banner.jpg");
+        collection.save(oldId, 1009610, "Spider-Man", "http://img/spidey.jpg");
+        learning.importStats(oldId, 7, 5, 3);
+        String uid = readyAs("davi").card.uid;
+
+        // Aparelho novo: nada gravado aqui, só o e-mail e a senha que o jogador lembra.
+        backend.signOut();
+        AccountStore freshAccounts = new AccountStore(
+                () -> tmp.getRoot().toPath().resolve("other.json").toFile(), 1_000);
+        CollectionStore freshCollection = new CollectionStore(
+                () -> tmp.getRoot().toPath().resolve("other-collection.json").toFile());
+        LearningStore freshLearning = new LearningStore(
+                () -> tmp.getRoot().toPath().resolve("other-learning.json").toFile(), direct);
+        FakeProfileImages freshImages = new FakeProfileImages(tmp.getRoot());
+        SocialRepository other = new SocialRepository(backend, freshAccounts, freshCollection, freshLearning,
+                freshImages, () -> null, direct, () -> 43L);
+
+        AccountStore.Account recovered = other.recover(" Davi@Exemplo.com ", "segredo1");
+
+        assertNotNull("conta recuperada do servidor", recovered);
+        assertEquals("Davi", recovered.name);
+        assertEquals("davi@exemplo.com", recovered.email);
+        assertEquals("davi", recovered.username);
+        assertEquals(uid, recovered.cloudUid);
+        assertEquals("vigia noturno", recovered.bio);
+        assertEquals("a foto volta na versão publicada",
+                "shared:avatar.jpg@" + SocialRepository.AVATAR_SHARE_PX, freshImages.saved.get(recovered.avatarFile));
+        assertEquals("o banner volta na versão publicada",
+                "shared:banner.jpg@" + SocialRepository.BANNER_SHARE_PX, freshImages.saved.get(recovered.bannerFile));
+        assertEquals("entra direto nos amigos, sem pedir a senha de novo",
+                SocialRepository.Status.READY, other.session().status);
+
+        List<CollectionStore.Entry> heroes = freshCollection.list(recovered.id);
+        assertEquals(1, heroes.size());
+        assertEquals(1009610, heroes.get(0).characterId);
+        LearningStore.Stats stats = freshLearning.stats(recovered.id);
+        assertEquals(7, stats.gamesPlayed);
+        assertEquals(5, stats.engineWins);
+        assertEquals(3, stats.distinctCharacters);
+    }
+
+    @Test
+    public void recover_onlyWithTheRightEmailAndPassword() throws SocialException {
+        readyAs("davi");
+        backend.signOut();
+        AccountStore freshAccounts = new AccountStore(
+                () -> tmp.getRoot().toPath().resolve("other.json").toFile(), 1_000);
+        SocialRepository other = new SocialRepository(backend, freshAccounts, collection, learning,
+                new FakeProfileImages(tmp.getRoot()), () -> null, direct, () -> 43L);
+
+        assertNull("senha errada não recupera", other.recover("davi@exemplo.com", "errada1"));
+        assertNull("e-mail sem conta online não recupera", other.recover("ninguem@exemplo.com", "segredo1"));
+        assertNull(freshAccounts.currentAccount());
+        assertNull("nenhuma sessão online fica aberta", backend.signedInUid());
+
+        backend.offline = true;
+        assertNull("sem rede não recupera", other.recover("davi@exemplo.com", "segredo1"));
+        assertNull(freshAccounts.currentAccount());
+    }
+
+    @Test
+    public void recover_doesNotDuplicateAnAccountThisDeviceAlreadyHas() throws SocialException {
+        String id = readyAs("davi").account.id;
+        backend.signOut();
+        accounts.signOut();
+
+        assertNull(repository.recover("davi@exemplo.com", "segredo1"));
+
+        assertNull("não deixa uma sessão pela metade", accounts.currentAccount());
+        assertEquals("a conta deste aparelho continua sendo a mesma",
+                id, accounts.signIn("davi@exemplo.com", "segredo1").account.id);
     }
 
     @Test

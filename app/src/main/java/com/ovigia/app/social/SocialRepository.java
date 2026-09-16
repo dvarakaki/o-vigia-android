@@ -8,10 +8,12 @@ import com.ovigia.app.data.roster.RosterCatalog;
 import com.ovigia.app.learning.LearningStore;
 import com.ovigia.app.profile.ProfileImages;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -136,23 +138,51 @@ public final class SocialRepository {
     }
 
     /**
-     * Depois do login local: quem já tinha conectado volta a ficar online sem
-     * digitar a senha de novo. Contas que nunca conectaram não são criadas aqui.
-     * Nunca falha.
+     * Depois do login ou do cadastro local: abre a sessão online com a senha que
+     * o jogador acabou de digitar, criando a conta online se ela ainda não
+     * existir. Assim a aba de amigos não pede a senha de novo. Nunca falha — sem
+     * rede, a aba volta a pedir a senha quando o jogador abrir.
      */
     public void resumeAfterSignIn(AccountStore.Account account, String password) {
         if (!backend.isConfigured()) return;
-        if (account.cloudUid == null) {
-            // Não deixa a sessão online de outra conta aberta.
-            backend.signOut();
-            return;
-        }
+        // Não deixa a sessão online de outra conta aberta.
+        if (account.cloudUid == null) backend.signOut();
         try {
-            link(account, password, false);
+            link(account, password, true);
             Session session = session();
             if (session.status == Status.READY) publishIgnoringErrors(session);
         } catch (SocialException ignored) {
             // A aba de amigos pede a senha quando o jogador abrir.
+        }
+    }
+
+    /**
+     * Entrar com um e-mail que já tem conta online, num aparelho onde ela não
+     * existe mais (app reinstalado, celular novo): recria a conta local com o que
+     * o servidor guardava — nome, bio, @usuario, foto, banner, heróis e números —
+     * e abre a sessão nela.
+     *
+     * Devolve {@code null} quando não dá para recuperar: sem servidor, sem rede,
+     * senha errada ou e-mail sem conta online. Nunca lança.
+     */
+    @Nullable
+    public AccountStore.Account recover(String email, String password) {
+        if (!backend.isConfigured()) return null;
+        String cleanEmail = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+        try {
+            String uid = backend.signIn(cleanEmail, password, false);
+            UserCard card = backend.loadCard(uid);
+            AccountStore.Result result = accountStore.restore(card == null ? null : card.name, cleanEmail,
+                    password, null, uid, cleanEmail, card == null ? null : card.username);
+            if (!result.isSuccess()) {
+                backend.signOut();
+                return null;
+            }
+            restoreFromCloud(result.account, uid, card);
+            publishIgnoringErrors(session());
+            return accountStore.currentAccount();
+        } catch (SocialException e) {
+            return null;
         }
     }
 
@@ -169,17 +199,52 @@ public final class SocialRepository {
         UserCard remote = backend.loadCard(uid);
         if (remote == null) return;
         accountStore.setUsername(account.id, remote.username);
-        importRemoteHeroes(account.id, uid);
+        restoreFromCloud(account, uid, remote);
     }
 
-    /** Heróis desbloqueados com esta conta em outro aparelho entram na coleção local. */
-    private void importRemoteHeroes(String accountId, String uid) {
+    /**
+     * Traz de volta o que a conta online guardava e ainda falta aqui: heróis,
+     * números das partidas e — só quando o campo está vazio neste aparelho — bio,
+     * foto e banner. Nada que já existe localmente é sobrescrito, então conectar
+     * uma conta em uso não mexe no perfil dela.
+     *
+     * A foto e o banner voltam na versão reduzida que foi publicada; o original
+     * fica no aparelho onde foi escolhido.
+     *
+     * {@code account} precisa ser a conta com sessão aberta: é nela que o perfil
+     * e as imagens são gravados.
+     */
+    private void restoreFromCloud(AccountStore.Account account, String uid, @Nullable UserCard card) {
+        PublicProfile profile;
         try {
-            for (PublicProfile.Hero hero : backend.loadProfile(uid).heroes) {
-                collectionStore.importEntry(accountId, hero.characterId, hero.name, hero.imageUrl, hero.unlockedAt);
-            }
-        } catch (SocialException ignored) {
-            // Perfil ainda não publicado ou sem rede: a coleção local vale.
+            profile = backend.loadProfile(uid);
+        } catch (SocialException e) {
+            // Perfil ainda não publicado ou sem rede: o que está no aparelho vale.
+            return;
+        }
+        for (PublicProfile.Hero hero : profile.heroes) {
+            collectionStore.importEntry(account.id, hero.characterId, hero.name, hero.imageUrl, hero.unlockedAt);
+        }
+        learningStore.importStats(account.id, profile.gamesPlayed, profile.engineWins, profile.distinctCharacters);
+        if (account.bio == null && profile.bio != null) {
+            // E-mail inalterado: não pede a senha atual.
+            accountStore.updateProfile(account.name, profile.bio, account.email, null);
+        }
+        if (account.avatarFile == null && card != null) {
+            saveSharedImage(account, AccountStore.ImageKind.AVATAR, card.avatar);
+        }
+        if (account.bannerFile == null) {
+            saveSharedImage(account, AccountStore.ImageKind.BANNER, profile.banner);
+        }
+    }
+
+    /** Grava a imagem publicada como arquivo local do perfil. Ignora falhas: o perfil funciona sem ela. */
+    private void saveSharedImage(AccountStore.Account account, AccountStore.ImageKind kind, @Nullable String shared) {
+        if (shared == null) return;
+        try {
+            accountStore.setImage(kind, images.saveShared(shared, kind, account.id));
+        } catch (IOException | RuntimeException ignored) {
+            // Imagem ilegível ou sem espaço: a conta volta sem ela.
         }
     }
 
