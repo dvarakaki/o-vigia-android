@@ -36,7 +36,16 @@ jobs:
         if: env.GOOGLE_SERVICES_JSON_BASE64 != ''
         run: echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d > app/google-services.json
 
-      # O CI não tem chave da Comic Vine: os testes não usam rede.
+      # Sem o secret cadastrado, o APK de release sai sem chave (só funciona com
+      # cache) e os testes seguem normalmente, pois não usam rede.
+      # Cadastre em Settings → Secrets and variables → Actions:
+      #   COMIC_VINE_API_KEY  (chave gratuita de https://comicvine.gamespot.com/api/)
+      - name: Configura chave da Comic Vine
+        env:
+          COMIC_VINE_API_KEY: ${{ secrets.COMIC_VINE_API_KEY }}
+        if: env.COMIC_VINE_API_KEY != ''
+        run: echo "COMIC_VINE_API_KEY=$COMIC_VINE_API_KEY" >> local.properties
+
       - name: Testes unitários
         run: ./gradlew testDebugUnitTest
 
