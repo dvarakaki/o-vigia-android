@@ -86,6 +86,25 @@ public final class Motion {
         track(set).start();
     }
 
+    /**
+     * "Hmm...": o Vigia inclina a cabeça de leve pra um lado e volta. Usado
+     * pra confirmar visualmente respostas que não trazem evidência (o "Não
+     * sei"), em que o humor dele por design não muda — sem esse gesto, a
+     * resposta parecia sumir na tela.
+     */
+    public void shrug(View view) {
+        ObjectAnimator tilt = ObjectAnimator.ofFloat(view, View.ROTATION, 0f, -6f, 4f, 0f);
+        tilt.setDuration(360);
+        tilt.setInterpolator(new FastOutSlowInInterpolator());
+        tilt.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                view.setRotation(0f);
+            }
+        });
+        track(tilt).start();
+    }
+
     /** Troca rápida de conteúdo (ex.: nova pergunta): o texto novo sobe e aparece em ~200 ms. */
     public void refresh(View... views) {
         float distance = views.length == 0 ? 0 : views[0].getResources().getDisplayMetrics().density * 10;
