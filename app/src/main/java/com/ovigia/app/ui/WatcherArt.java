@@ -38,6 +38,11 @@ public final class WatcherArt {
         }
     }
 
+    /** Sinal visível de que ele registrou um "Não sei" — o humor por design não muda. */
+    public void shrug() {
+        motion.shrug(image);
+    }
+
     @DrawableRes
     public static int drawableFor(WatcherMood mood) {
         switch (mood) {

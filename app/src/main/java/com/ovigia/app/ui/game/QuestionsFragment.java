@@ -75,6 +75,10 @@ public class QuestionsFragment extends GameFragment {
             if (SystemClock.uptimeMillis() - questionShownAt < ANSWER_COOLDOWN_MS) return;
             if (!isCurrentDestination(R.id.questionsFragment)) return;
             answerFeedback(v);
+            // "Não sei" não mexe no humor: sem um gesto pequeno da arte, o
+            // jogador não percebe que o toque foi aceito. As outras respostas
+            // já se anunciam pela troca de sprite (art.show).
+            if (answer == Answer.NAO_SEI && art != null) art.shrug();
             viewModel.answer(answer);
         });
     }
