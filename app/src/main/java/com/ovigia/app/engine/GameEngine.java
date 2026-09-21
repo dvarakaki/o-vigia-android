@@ -450,6 +450,17 @@ public class GameEngine {
         return questionsAsked;
     }
 
+    /**
+     * Quantas perguntas já apareceram na tela — respondidas OU puladas com
+     * "Não sei". Diferente de {@link #questionsAsked()}, que conta só as
+     * respostas com evidência. Serve pro contador que o jogador vê: sem
+     * ele, um "Não sei" mantinha o mesmo "Questão Nº X" e parecia que o
+     * botão não fazia nada.
+     */
+    public int questionsShown() {
+        return askedKeys.size();
+    }
+
     /** Até {@code limit} candidatos ainda ativos, do mais pro menos provável. */
     public List<CharacterProfile> remainingCandidates(int limit) {
         List<CharacterProfile> active = new ArrayList<>();

@@ -257,7 +257,7 @@ public class GameViewModel extends ViewModel {
         }
         currentQuestionKey = key;
         savedState.set(KEY_QUESTION, key);
-        state.setValue(GameUiState.asking(engine.questionTextFor(key), engine.questionsAsked() + 1,
+        state.setValue(GameUiState.asking(engine.questionTextFor(key), engine.questionsShown() + 1,
                 engine.canGoBack(), mood));
     }
 

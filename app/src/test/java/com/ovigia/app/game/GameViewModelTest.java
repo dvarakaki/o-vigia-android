@@ -24,6 +24,7 @@ import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -131,6 +132,22 @@ public class GameViewModelTest {
 
         assertEquals(first, vm.state().getValue().questionText);
         assertEquals(1, vm.state().getValue().questionNumber);
+    }
+
+    @Test
+    public void dontKnow_advancesTheQuestionNumber() {
+        GameViewModel vm = newViewModel(new SavedStateHandle());
+        vm.start();
+        String first = vm.state().getValue().questionText;
+        assertEquals(1, vm.state().getValue().questionNumber);
+
+        vm.answer(Answer.NAO_SEI);
+
+        // Sem evidência, mas o jogador viu duas perguntas: o contador precisa
+        // andar pra ele perceber que o "Não sei" foi aceito.
+        assertEquals(GameUiState.Phase.ASKING, vm.state().getValue().phase);
+        assertEquals(2, vm.state().getValue().questionNumber);
+        assertNotEquals(first, vm.state().getValue().questionText);
     }
 
     @Test

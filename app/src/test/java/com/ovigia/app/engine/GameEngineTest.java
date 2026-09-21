@@ -164,6 +164,7 @@ public class GameEngineTest {
 
         assertEquals("Não sei não deve alterar probabilidade", probBefore, candidates.get(0).probability, 1e-9);
         assertEquals("Não sei não deve contar como pergunta feita", 0, engine.questionsAsked());
+        assertEquals("Não sei conta como pergunta apresentada", 1, engine.questionsShown());
         assertNotEquals("pergunta pulada não deve ser oferecida de novo", "x", engine.nextQuestionKey());
     }
 
