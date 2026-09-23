@@ -152,7 +152,7 @@ public class GameEngineTest {
     }
 
     @Test
-    public void skipQuestion_marksAsAskedButDoesNotChangeProbabilities() {
+    public void skipQuestion_marksAsAskedAndAdvancesCounterButNotProbabilities() {
         List<CharacterProfile> candidates = new ArrayList<>();
         candidates.add(profile(1, "A", attrs("x", 0.9, "y", 0.1)));
         candidates.add(profile(2, "B", attrs("x", 0.1, "y", 0.9)));
@@ -163,7 +163,7 @@ public class GameEngineTest {
         engine.skipQuestion("x");
 
         assertEquals("Não sei não deve alterar probabilidade", probBefore, candidates.get(0).probability, 1e-9);
-        assertEquals("Não sei não deve contar como pergunta feita", 0, engine.questionsAsked());
+        assertEquals("Não sei deve avançar a numeração", 1, engine.questionsAsked());
         assertNotEquals("pergunta pulada não deve ser oferecida de novo", "x", engine.nextQuestionKey());
     }
 
@@ -176,12 +176,12 @@ public class GameEngineTest {
         GameEngine engine = engine(candidates, questions("x"));
         engine.answer("x", Answer.NAO_SEI);
 
-        assertEquals(0, engine.questionsAsked());
+        assertEquals(1, engine.questionsAsked());
         assertEquals(0.5, candidates.get(0).probability, 1e-9);
     }
 
     @Test
-    public void goBack_undoesSkipQuestionWithoutDecrementingCounter() {
+    public void goBack_undoesSkipQuestionAndDecrementsCounter() {
         List<CharacterProfile> candidates = new ArrayList<>();
         candidates.add(profile(1, "A", attrs("x", 0.9, "y", 0.1)));
         candidates.add(profile(2, "B", attrs("x", 0.1, "y", 0.9)));
@@ -191,10 +191,10 @@ public class GameEngineTest {
         assertEquals(1, engine.questionsAsked());
 
         engine.skipQuestion("y");
-        assertEquals("skip não incrementa contador", 1, engine.questionsAsked());
+        assertEquals("skip avança o contador", 2, engine.questionsAsked());
 
         engine.goBack();
-        assertEquals("goBack de skip não decrementa contador", 1, engine.questionsAsked());
+        assertEquals("goBack de skip decrementa o contador", 1, engine.questionsAsked());
         assertEquals("pergunta pulada volta a estar disponível", "y", engine.nextQuestionKey());
     }
 

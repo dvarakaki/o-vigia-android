@@ -14,6 +14,7 @@ import com.ovigia.app.data.ComicVineHeroDetailRepository;
 import com.ovigia.app.data.HeroDetailRepository;
 import com.ovigia.app.data.QuestionTexts;
 import com.ovigia.app.data.roster.RosterCatalog;
+import com.ovigia.app.engine.CharacterProfile;
 import com.ovigia.app.learning.LearningStore;
 import com.ovigia.app.profile.AndroidProfileImages;
 import com.ovigia.app.profile.ProfileImages;
@@ -32,6 +33,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -138,6 +141,22 @@ public final class AppContainer {
         ioExecutor.execute(learningStore::ensureLoaded);
         ioExecutor.execute(accountStore::ensureLoaded);
         ioExecutor.execute(settingsStore::ensureLoaded);
+        // Aquece o elenco durante a abertura: sem cache em disco (instalação nova, ou vencido),
+        // essa é a chamada lenta à Comic Vine — feita agora, some no tempo da splash em vez de
+        // atrasar a primeira pergunta. Com cache, é só uma leitura de disco a mais, barata. O
+        // resultado fica em memória no repositório; a tela de perguntas que carregar depois pega
+        // o mesmo elenco na hora.
+        characterRepository.loadCharacters(new CharacterRepository.Callback() {
+            @Override
+            public void onSuccess(List<CharacterProfile> profiles, Map<String, String> questionTextByKey) {
+                // Só aquecer o cache em memória — quem precisa do elenco chama loadCharacters de novo.
+            }
+
+            @Override
+            public void onError(CharacterRepository.LoadError error) {
+                // Ignorado: a tela que realmente precisar do elenco tenta de novo e mostra o erro.
+            }
+        });
     }
 
     /**

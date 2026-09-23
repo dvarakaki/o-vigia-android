@@ -272,7 +272,7 @@ public class GameEngine {
             skipQuestion(key);
             return;
         }
-        history.push(new Snapshot(key, currentProbabilities(), false));
+        history.push(new Snapshot(key, currentProbabilities()));
         askedKeys.add(key);
         questionsAsked++;
 
@@ -286,12 +286,14 @@ public class GameEngine {
 
     /**
      * Jogador respondeu "Não sei": marca a chave como perguntada (pra não
-     * repeti-la) sem alterar probabilidades nem o contador de perguntas.
+     * repeti-la) e avança o contador de perguntas — pro jogador ver a
+     * numeração seguir em frente — mas sem alterar nenhuma probabilidade.
      * Empilha um snapshot pra que {@link #goBack} consiga desfazer.
      */
     public void skipQuestion(String key) {
-        history.push(new Snapshot(key, currentProbabilities(), true));
+        history.push(new Snapshot(key, currentProbabilities()));
         askedKeys.add(key);
+        questionsAsked++;
     }
 
     /** Se dá pra desfazer a última resposta e voltar pra pergunta anterior. */
@@ -309,9 +311,7 @@ public class GameEngine {
         if (history.isEmpty()) return;
         Snapshot snapshot = history.pop();
         askedKeys.remove(snapshot.key);
-        if (!snapshot.wasSkip) {
-            questionsAsked--;
-        }
+        questionsAsked--;
         // Um chute rejeitado depois da resposta desfeita já tinha "zerado" a
         // exigência de evidência naquele ponto; como a resposta sumiu, o marco
         // não pode ficar à frente do contador (senão travaria chutes a mais).
@@ -333,13 +333,10 @@ public class GameEngine {
     private static final class Snapshot {
         final String key;
         final double[] probabilitiesBefore;
-        /** True se veio de {@link #skipQuestion} — {@link #goBack} não decrementa o contador nesse caso. */
-        final boolean wasSkip;
 
-        Snapshot(String key, double[] probabilitiesBefore, boolean wasSkip) {
+        Snapshot(String key, double[] probabilitiesBefore) {
             this.key = key;
             this.probabilitiesBefore = probabilitiesBefore;
-            this.wasSkip = wasSkip;
         }
     }
 
