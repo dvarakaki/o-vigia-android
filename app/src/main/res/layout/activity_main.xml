@@ -20,4 +20,14 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_main" />
 
+    <!--
+      Abertura: o palco da splash só é inflado no primeiro desenho e sai da
+      hierarquia quando a cena acaba — ver com.ovigia.app.ui.splash.SplashStage.
+    -->
+    <ViewStub
+        android:id="@+id/splashStage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/view_splash_stage" />
+
 </FrameLayout>

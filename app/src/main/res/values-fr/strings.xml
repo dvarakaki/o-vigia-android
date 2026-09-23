@@ -9,6 +9,7 @@
     <string name="cd_back">Retour</string>
     <string name="cd_previous_question">Question précédente</string>
     <string name="cd_watcher_art">Le Gardien, pensif</string>
+    <string name="splash_tagline">Rien n\'échappe au regard du Gardien.</string>
 
     <!-- Profil -->
     <string name="percent_value">%1$d %%</string>

@@ -9,6 +9,7 @@
     <string name="cd_back">Back</string>
     <string name="cd_previous_question">Previous question</string>
     <string name="cd_watcher_art">The Watcher, deep in thought</string>
+    <string name="splash_tagline">Nothing escapes the Watcher\'s gaze.</string>
 
     <!-- Profile -->
     <string name="percent_value">%1$d%%</string>

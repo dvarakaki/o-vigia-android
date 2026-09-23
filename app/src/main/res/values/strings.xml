@@ -14,6 +14,7 @@
     <string name="cd_back">Voltar</string>
     <string name="cd_previous_question">Pergunta anterior</string>
     <string name="cd_watcher_art">O Vigia pensativo</string>
+    <string name="splash_tagline">Nada escapa ao olhar do Vigia.</string>
 
     <!-- Perfil -->
     <string name="percent_value">%1$d%%</string>

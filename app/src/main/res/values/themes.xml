@@ -23,10 +23,16 @@
         <item name="colorSurfaceContainerHigh">@color/vigia_dialog</item>
     </style>
 
-    <!-- Splash (Android 12+ usa o ícone do app sobre esta cor). -->
+    <!--
+      Splash: o olho do Vigia se desenha em vetor sobre o fundo espacial
+      (anel → amêndoa → íris → pupila em estrela → glints). A duração aqui
+      acompanha a do AVD e a de SplashStage.SEAL_MS; a saída é da MainActivity,
+      que entrega a cena para o palco da abertura.
+    -->
     <style name="Theme.OVigia.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/vigia_space</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_animated</item>
+        <item name="windowSplashScreenAnimationDuration">900</item>
         <item name="postSplashScreenTheme">@style/Theme.OVigia</item>
     </style>
 </resources>

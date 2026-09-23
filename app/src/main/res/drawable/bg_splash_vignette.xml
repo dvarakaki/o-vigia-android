@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vinheta: escurece as bordas e empurra o olhar para o centro da cena. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:centerColor="#00040A1C"
+        android:centerX="0.5"
+        android:centerY="0.44"
+        android:endColor="#A603060F"
+        android:gradientRadius="86%p"
+        android:startColor="#00040A1C"
+        android:type="radial" />
+</shape>

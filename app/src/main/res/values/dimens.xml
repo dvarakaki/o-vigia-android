@@ -43,4 +43,13 @@
     <dimen name="hero_bio_collapsed_height">360dp</dimen>
     <dimen name="hero_bio_fade_height">96dp</dimen>
     <dimen name="hero_chip_spacing">8dp</dimen>
+    <!-- Splash cinematográfica -->
+    <!-- Diâmetro das camadas do centro cósmico, todas ancoradas na arte do Vigia. -->
+    <dimen name="splash_rays">680dp</dimen>
+    <dimen name="splash_aura">560dp</dimen>
+    <dimen name="splash_ring">200dp</dimen>
+    <dimen name="splash_flash">300dp</dimen>
+    <!-- Largura máxima da arte, igual à da tela inicial: a troca não mexe o Vigia. -->
+    <dimen name="splash_art_max_width">420dp</dimen>
+    <dimen name="splash_rule_width">180dp</dimen>
 </resources>

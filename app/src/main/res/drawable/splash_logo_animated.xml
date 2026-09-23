@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  O olho abrindo (~860 ms). Tudo em fast_out_slow_in / decelerate: o selo
+  assenta sem overshoot, como um instrumento que liga, e não como um logo
+  que pula. A ordem conta a ideia — primeiro a órbita, depois o olho:
+
+      0 →  860 ms   o selo inteiro assenta de 0.94 → 1.0
+      0 →  620 ms   o anel externo se desenha no sentido horário
+      0 →  560 ms   o halo acende
+      0 →  860 ms   o bezel gira -14° → 0°
+     60 →  620 ms   a amêndoa do olho é traçada
+    380 →  680 ms   as marcações do bezel acendem
+    380 →  760 ms   a íris abre
+    520 →  860 ms   a pupila em estrela floresce, girando -45° → 0°
+    660 →  860 ms   os glints acendem, e o olho está vendo você
+-->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/splash_logo">
+
+    <target android:name="root">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="860"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.94"
+                    android:valueTo="1.0" />
+                <objectAnimator
+                    android:duration="860"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.94"
+                    android:valueTo="1.0" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <target android:name="halo">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="560"
+                android:interpolator="@android:anim/decelerate_interpolator"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0"
+                android:valueTo="1" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="ringOuter">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="620"
+                android:interpolator="@android:interpolator/fast_out_slow_in"
+                android:propertyName="trimPathEnd"
+                android:valueFrom="0"
+                android:valueTo="1" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="ticks">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="860"
+                android:interpolator="@android:anim/decelerate_interpolator"
+                android:propertyName="rotation"
+                android:valueFrom="-14"
+                android:valueTo="0" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="ticksPath">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="300"
+                android:interpolator="@android:anim/decelerate_interpolator"
+                android:propertyName="strokeAlpha"
+                android:startOffset="380"
+                android:valueFrom="0"
+                android:valueTo="0.6" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="lid">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="560"
+                android:interpolator="@android:interpolator/fast_out_slow_in"
+                android:propertyName="trimPathEnd"
+                android:startOffset="60"
+                android:valueFrom="0"
+                android:valueTo="1" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="iris">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="380"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleX"
+                    android:startOffset="380"
+                    android:valueFrom="0"
+                    android:valueTo="1" />
+                <objectAnimator
+                    android:duration="380"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleY"
+                    android:startOffset="380"
+                    android:valueFrom="0"
+                    android:valueTo="1" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <target android:name="pupil">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="340"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleX"
+                    android:startOffset="520"
+                    android:valueFrom="0"
+                    android:valueTo="1" />
+                <objectAnimator
+                    android:duration="340"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleY"
+                    android:startOffset="520"
+                    android:valueFrom="0"
+                    android:valueTo="1" />
+                <objectAnimator
+                    android:duration="340"
+                    android:interpolator="@android:anim/decelerate_interpolator"
+                    android:propertyName="rotation"
+                    android:startOffset="520"
+                    android:valueFrom="-45"
+                    android:valueTo="0" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <target android:name="glintBig">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="160"
+                android:interpolator="@android:anim/decelerate_interpolator"
+                android:propertyName="fillAlpha"
+                android:startOffset="660"
+                android:valueFrom="0"
+                android:valueTo="0.95" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="glintSmall">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="140"
+                android:interpolator="@android:anim/decelerate_interpolator"
+                android:propertyName="fillAlpha"
+                android:startOffset="720"
+                android:valueFrom="0"
+                android:valueTo="0.8" />
+        </aapt:attr>
+    </target>
+</animated-vector>

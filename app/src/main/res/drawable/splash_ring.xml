@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onda de choque: um anel dourado fino. O palco usa três, em escalas e atrasos
+  diferentes, crescendo e sumindo — o pulso que o olho solta ao abrir.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:pathData="M50,2 A48,48 0 1,1 50,98 A48,48 0 1,1 50,2 Z"
+        android:strokeColor="#E8C468"
+        android:strokeWidth="0.9" />
+</vector>

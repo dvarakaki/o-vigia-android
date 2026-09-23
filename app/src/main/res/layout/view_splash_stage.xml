@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Palco da abertura, por cima do app inteiro e só no primeiro desenho: o olho
+  do splash do sistema estoura aqui dentro (clarão + ondas de choque), os raios
+  acendem, o Vigia sobe da luz e a marca assenta.
+
+  A composição repete a da tela inicial de propósito — título no topo, arte no
+  meio, na mesma largura máxima. Quando o palco dissolve, o Vigia e o título já
+  estão onde a Home os desenha, e a troca não mexe nada de lugar.
+
+  A ordem das camadas é a profundidade da cena: galáxia, estrelas, raios, aura,
+  ondas, o Vigia, o clarão, a vinheta e por fim a marca.
+
+  Inteiro decorativo e passageiro: noHideDescendants tira o palco do TalkBack,
+  que já lê a Home logo atrás. O toque, esse continua valendo — é o atalho para
+  pular a cena.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splashStageRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vigia_space"
+    android:clickable="true"
+    android:focusable="true"
+    android:importantForAccessibility="noHideDescendants">
+
+    <!-- A mesma galáxia do app, começando com um leve zoom que se desfaz até a saída. -->
+    <ImageView
+        android:id="@+id/galaxy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_galaxy" />
+
+    <com.ovigia.app.ui.splash.StarfieldView
+        android:id="@+id/starfield"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--
+      Centro cósmico: tudo ancorado na arte, com viés para cima para o estouro
+      sair do rosto do Vigia, e não da barra dele.
+    -->
+    <ImageView
+        android:id="@+id/rays"
+        android:layout_width="@dimen/splash_rays"
+        android:layout_height="@dimen/splash_rays"
+        android:alpha="0"
+        android:src="@drawable/splash_rays"
+        app:layout_constraintBottom_toBottomOf="@id/art"
+        app:layout_constraintEnd_toEndOf="@id/art"
+        app:layout_constraintStart_toStartOf="@id/art"
+        app:layout_constraintTop_toTopOf="@id/art"
+        app:layout_constraintVertical_bias="0.42" />
+
+    <ImageView
+        android:id="@+id/aura"
+        android:layout_width="@dimen/splash_aura"
+        android:layout_height="@dimen/splash_aura"
+        android:alpha="0"
+        android:src="@drawable/splash_aura"
+        app:layout_constraintBottom_toBottomOf="@id/art"
+        app:layout_constraintEnd_toEndOf="@id/art"
+        app:layout_constraintStart_toStartOf="@id/art"
+        app:layout_constraintTop_toTopOf="@id/art"
+        app:layout_constraintVertical_bias="0.42" />
+
+    <ImageView
+        android:id="@+id/ring1"
+        android:layout_width="@dimen/splash_ring"
+        android:layout_height="@dimen/splash_ring"
+        android:alpha="0"
+        android:src="@drawable/splash_ring"
+        app:layout_constraintBottom_toBottomOf="@id/art"
+        app:layout_constraintEnd_toEndOf="@id/art"
+        app:layout_constraintStart_toStartOf="@id/art"
+        app:layout_constraintTop_toTopOf="@id/art"
+        app:layout_constraintVertical_bias="0.42" />
+
+    <ImageView
+        android:id="@+id/ring2"
+        android:layout_width="@dimen/splash_ring"
+        android:layout_height="@dimen/splash_ring"
+        android:alpha="0"
+        android:src="@drawable/splash_ring"
+        app:layout_constraintBottom_toBottomOf="@id/art"
+        app:layout_constraintEnd_toEndOf="@id/art"
+        app:layout_constraintStart_toStartOf="@id/art"
+        app:layout_constraintTop_toTopOf="@id/art"
+        app:layout_constraintVertical_bias="0.42" />
+
+    <ImageView
+        android:id="@+id/ring3"
+        android:layout_width="@dimen/splash_ring"
+        android:layout_height="@dimen/splash_ring"
+        android:alpha="0"
+        android:src="@drawable/splash_ring"
+        app:layout_constraintBottom_toBottomOf="@id/art"
+        app:layout_constraintEnd_toEndOf="@id/art"
+        app:layout_constraintStart_toStartOf="@id/art"
+        app:layout_constraintTop_toTopOf="@id/art"
+        app:layout_constraintVertical_bias="0.42" />
+
+    <!-- O Vigia, na largura máxima e na faixa da tela inicial. -->
+    <ImageView
+        android:id="@+id/art"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="28dp"
+        android:alpha="0"
+        android:scaleType="fitCenter"
+        android:src="@drawable/art_watcher"
+        app:layout_constraintBottom_toTopOf="@id/rule"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_max="@dimen/splash_art_max_width" />
+
+    <!-- Clarão do olho abrindo: cobre a emenda entre o splash do sistema e o palco. -->
+    <ImageView
+        android:id="@+id/flash"
+        android:layout_width="@dimen/splash_flash"
+        android:layout_height="@dimen/splash_flash"
+        android:alpha="0"
+        android:src="@drawable/splash_flash"
+        app:layout_constraintBottom_toBottomOf="@id/art"
+        app:layout_constraintEnd_toEndOf="@id/art"
+        app:layout_constraintStart_toStartOf="@id/art"
+        app:layout_constraintTop_toTopOf="@id/art"
+        app:layout_constraintVertical_bias="0.42" />
+
+    <View
+        android:id="@+id/vignette"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_splash_vignette" />
+
+    <!--
+      Marca: o mesmo layout da tela inicial, na mesma posição. O estado inicial
+      (apagada e um pouco maior) fica na SplashStage, porque <include> só
+      repassa id, visibilidade e layout_* — um android:alpha aqui seria ignorado
+      e o título piscaria inteiro antes da animação começar.
+    -->
+    <include
+        android:id="@+id/title"
+        layout="@layout/view_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/rule"
+        android:layout_width="@dimen/splash_rule_width"
+        android:layout_height="1dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_splash_rule"
+        android:scaleX="0"
+        app:layout_constraintBottom_toTopOf="@id/tagline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_margin"
+        android:layout_marginBottom="64dp"
+        android:alpha="0"
+        android:gravity="center"
+        android:letterSpacing="0.12"
+        android:shadowColor="#AA000000"
+        android:shadowRadius="6"
+        android:text="@string/splash_tagline"
+        android:textColor="@color/vigia_gold_soft"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Nada escapa ao olhar do Vigia." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

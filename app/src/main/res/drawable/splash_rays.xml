@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Raios do olho: 16 feixes dourados de espessura alternada saindo do centro.
+  O gradiente radial apaga o miolo (quem acende o centro é splash_aura) e some
+  na borda, então os feixes não terminam num corte reto. Usado bem transparente
+  e girando devagar — é atmosfera, não desenho.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <path android:pathData="M100,100 L199.59,90.94 L199.59,109.06 Z M100,100 L193.67,135.02 L191.00,141.47 Z M100,100 L174.78,166.39 L166.39,174.78 Z M100,100 L140.83,191.28 L135.67,193.42 Z M100,100 L108.02,199.68 L91.98,199.68 Z M100,100 L65.63,193.91 L57.90,190.70 Z M100,100 L33.09,174.31 L25.69,166.91 Z M100,100 L8.86,141.15 L6.46,135.35 Z M100,100 L0.41,109.06 L0.41,90.94 Z M100,100 L6.33,64.98 L9.00,58.53 Z M100,100 L25.22,33.61 L33.61,25.22 Z M100,100 L59.17,8.72 L64.33,6.58 Z M100,100 L91.98,0.32 L108.02,0.32 Z M100,100 L134.37,6.09 L142.10,9.30 Z M100,100 L166.91,25.69 L174.31,33.09 Z M100,100 L191.14,58.85 L193.54,64.65 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="100"
+                android:centerY="100"
+                android:gradientRadius="100"
+                android:type="radial">
+                <item android:color="#00EFC65E" android:offset="0.0" />
+                <item android:color="#99EFC65E" android:offset="0.22" />
+                <item android:color="#3DEFC65E" android:offset="0.60" />
+                <item android:color="#00EFC65E" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

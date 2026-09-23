@@ -9,6 +9,7 @@
     <string name="cd_back">Volver</string>
     <string name="cd_previous_question">Pregunta anterior</string>
     <string name="cd_watcher_art">El Vigilante, pensativo</string>
+    <string name="splash_tagline">Nada escapa a la mirada del Vigilante.</string>
 
     <!-- Perfil -->
     <string name="percent_value">%1$d%%</string>
