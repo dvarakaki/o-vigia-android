@@ -78,34 +78,63 @@ public final class FirebaseSocialBackend implements SocialBackend {
 
     @Override
     public boolean isConfigured() {
-        return !emulatorHost.isEmpty() || !FirebaseApp.getApps(context).isEmpty();
+        if (!emulatorHost.isEmpty()) return true;
+        try {
+            return !FirebaseApp.getApps(context).isEmpty();
+        } catch (RuntimeException e) {
+            // O SDK do Firebase pode lançar se a lib nativa não carregou ou o
+            // contexto do app está estranho: prefere-se dizer "não configurado"
+            // a derrubar o processo.
+            Log.w(TAG, "Firebase.getApps indisponível", e);
+            return false;
+        }
     }
 
-    /** Liga Auth e Firestore na primeira operação (ler a sessão salva toca o disco). */
+    /**
+     * Liga Auth e Firestore na primeira operação (ler a sessão salva toca o
+     * disco). Qualquer falha nativa do Firebase — configuração ausente,
+     * settings do Firestore rejeitadas, credenciais inválidas — vira uma
+     * {@link SocialException} pra não derrubar o processo: sem sessão online,
+     * a tela cai no gate de senha em vez de crashar.
+     */
     private synchronized void init() throws SocialException {
         if (auth != null) return;
         if (!isConfigured()) throw new SocialException(SocialException.Error.NOT_CONFIGURED);
-        FirebaseApp app;
-        if (!FirebaseApp.getApps(context).isEmpty()) {
-            app = FirebaseApp.getInstance();
-        } else {
-            app = FirebaseApp.initializeApp(context, new FirebaseOptions.Builder()
-                    .setProjectId(EMULATOR_PROJECT_ID)
-                    .setApplicationId("1:000000000000:android:0000000000000000")
-                    .setApiKey("emulator")
-                    .build());
+        try {
+            FirebaseApp app;
+            if (!FirebaseApp.getApps(context).isEmpty()) {
+                app = FirebaseApp.getInstance();
+            } else {
+                app = FirebaseApp.initializeApp(context, new FirebaseOptions.Builder()
+                        .setProjectId(EMULATOR_PROJECT_ID)
+                        .setApplicationId("1:000000000000:android:0000000000000000")
+                        .setApiKey("emulator")
+                        .build());
+            }
+            FirebaseAuth newAuth = FirebaseAuth.getInstance(app);
+            FirebaseFirestore newDb = FirebaseFirestore.getInstance(app);
+            if (!emulatorHost.isEmpty()) {
+                newAuth.useEmulator(emulatorHost, 9099);
+                newDb.useEmulator(emulatorHost, 8080);
+            }
+            // setFirestoreSettings só é aceito ANTES de qualquer operação no
+            // Firestore. Se algum inicializador do Firebase tocou o cliente
+            // antes (auto-init em alguma versão do SDK), o SDK lança
+            // IllegalStateException; a gente segue com as settings padrão em
+            // vez de derrubar o app.
+            try {
+                newDb.setFirestoreSettings(new FirebaseFirestoreSettings.Builder()
+                        .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
+                        .build());
+            } catch (IllegalStateException e) {
+                Log.w(TAG, "Firestore já em uso; mantendo settings padrão", e);
+            }
+            auth = newAuth;
+            db = newDb;
+        } catch (RuntimeException e) {
+            Log.w(TAG, "Firebase indisponível", e);
+            throw new SocialException(SocialException.Error.NOT_CONFIGURED, e);
         }
-        FirebaseAuth newAuth = FirebaseAuth.getInstance(app);
-        FirebaseFirestore newDb = FirebaseFirestore.getInstance(app);
-        if (!emulatorHost.isEmpty()) {
-            newAuth.useEmulator(emulatorHost, 9099);
-            newDb.useEmulator(emulatorHost, 8080);
-        }
-        newDb.setFirestoreSettings(new FirebaseFirestoreSettings.Builder()
-                .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
-                .build());
-        auth = newAuth;
-        db = newDb;
     }
 
     // ---------------------------------------------------------------- sessão
@@ -115,11 +144,13 @@ public final class FirebaseSocialBackend implements SocialBackend {
     public String signedInUid() {
         try {
             init();
-        } catch (SocialException e) {
+            FirebaseUser user = auth.getCurrentUser();
+            return user != null ? user.getUid() : null;
+        } catch (SocialException | RuntimeException e) {
+            // Sem Firebase (configuração ausente, token expirado que o SDK
+            // recusa, disco cheio): a tela de amigos volta a pedir a senha.
             return null;
         }
-        FirebaseUser user = auth.getCurrentUser();
-        return user != null ? user.getUid() : null;
     }
 
     @Override

@@ -110,16 +110,32 @@ public final class SocialRepository {
 
     // ---------------------------------------------------------------- sessão
 
-    /** Sem rede: só olha a conta local e a sessão online guardada. */
+    /**
+     * Sem rede: só olha a conta local e a sessão online guardada. Qualquer
+     * falha do backend (Firebase indisponível, cartão ilegível, foto que não
+     * dá pra codificar) cai em {@link Status#NEEDS_CONNECTION}: a tela de
+     * amigos volta a pedir a senha em vez de derrubar o app.
+     */
     public Session session() {
-        if (!backend.isConfigured()) return new Session(Status.NOT_CONFIGURED, null, null);
-        AccountStore.Account account = accountStore.currentAccount();
-        if (account == null) return new Session(Status.SIGNED_OUT, null, null);
-        if (account.cloudUid == null || !account.cloudUid.equals(backend.signedInUid())) {
-            return new Session(Status.NEEDS_CONNECTION, account, null);
+        try {
+            if (!backend.isConfigured()) return new Session(Status.NOT_CONFIGURED, null, null);
+            AccountStore.Account account = accountStore.currentAccount();
+            if (account == null) return new Session(Status.SIGNED_OUT, null, null);
+            if (account.cloudUid == null || !account.cloudUid.equals(backend.signedInUid())) {
+                return new Session(Status.NEEDS_CONNECTION, account, null);
+            }
+            if (account.username == null) return new Session(Status.NEEDS_USERNAME, account, null);
+            return new Session(Status.READY, account, cardFor(account));
+        } catch (RuntimeException e) {
+            AccountStore.Account fallbackAccount;
+            try {
+                fallbackAccount = accountStore.currentAccount();
+            } catch (RuntimeException ignored) {
+                fallbackAccount = null;
+            }
+            return new Session(fallbackAccount == null ? Status.SIGNED_OUT : Status.NEEDS_CONNECTION,
+                    fallbackAccount, null);
         }
-        if (account.username == null) return new Session(Status.NEEDS_USERNAME, account, null);
-        return new Session(Status.READY, account, cardFor(account));
     }
 
     /**
@@ -274,13 +290,28 @@ public final class SocialRepository {
 
     /**
      * Publica em segundo plano se a conta estiver online. Pedidos que chegam
-     * enquanto um já espera na fila viram um só.
+     * enquanto um já espera na fila viram um só. Chamado das telas na main
+     * thread: qualquer falha inesperada do backend (Firebase nativo com problema,
+     * contexto do app estranho) vira log em vez de derrubar o app — a próxima
+     * publicação tenta de novo.
      */
     public void publishQuietly() {
-        if (!backend.isConfigured() || !publishQueued.compareAndSet(false, true)) return;
+        boolean configured;
+        try {
+            configured = backend.isConfigured();
+        } catch (RuntimeException e) {
+            return;
+        }
+        if (!configured || !publishQueued.compareAndSet(false, true)) return;
         executor.execute(() -> {
             publishQueued.set(false);
-            publishIgnoringErrors(session());
+            try {
+                publishIgnoringErrors(session());
+            } catch (RuntimeException ignored) {
+                // publishIgnoringErrors e session() já engolem tudo, mas belt
+                // and suspenders: o thread do executor sobrevive pra próxima
+                // publicação.
+            }
         });
     }
 
